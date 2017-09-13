@@ -3,7 +3,6 @@ package goldzweigapps.com.library.preferences
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
-import java.util.*
 
 /**
  * Created by gilgoldzweig on 04/09/2017.
@@ -152,3 +151,4 @@ inline fun pref(sharedPreferences: GlobalSharedPreferences.() -> Unit) = with(Gl
     apply()
     this
 }
+

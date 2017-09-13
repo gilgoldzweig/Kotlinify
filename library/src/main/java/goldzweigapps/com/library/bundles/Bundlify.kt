@@ -95,6 +95,7 @@ class Bundlify {
             is Array<*> ->
                     put(this, value as Array<Parcelable>)
             is ArrayList<*> ->
+
                 put(this, value as ArrayList<Parcelable>)
         }
     }
@@ -118,6 +119,5 @@ class Bundlify {
     operator fun minus(key: String) = remove(key)
     //endregion remove
 }
-inline fun bundle(bundle: Bundlify.() -> Unit) = with(Bundlify()) {
-    apply(bundle).bundle
-}
+
+inline fun bundle(bundle: Bundlify.() -> Unit) = Bundlify().apply(bundle).bundle

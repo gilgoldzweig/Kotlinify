@@ -132,3 +132,4 @@ abstract class GenericRecyclerAdapter<E>(context: Context,
     //endregion operators
     //endregion open functions
 }
+
