@@ -1,1 +1,1 @@
-include ':app', ':reactive', ':Jackson', ':core', ':Timber'
+include ':app', ':reactive', ':jackson', ':core', ':timber'

@@ -3,14 +3,14 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Extentions.iml" filepath="$PROJECT_DIR$/Extentions.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Jackson/json.iml" filepath="$PROJECT_DIR$/Jackson/json.iml" />
       <module fileurl="file://$PROJECT_DIR$/json/Jackson.iml" filepath="$PROJECT_DIR$/json/Jackson.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Timber/timber.iml" filepath="$PROJECT_DIR$/Timber/timber.iml" />
       <module fileurl="file://$PROJECT_DIR$/Jackson/activites.iml" filepath="$PROJECT_DIR$/Jackson/activites.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/core/core.iml" filepath="$PROJECT_DIR$/core/core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/jackson/jackson.iml" filepath="$PROJECT_DIR$/jackson/jackson.iml" />
       <module fileurl="file://$PROJECT_DIR$/core/library.iml" filepath="$PROJECT_DIR$/core/library.iml" />
       <module fileurl="file://$PROJECT_DIR$/reactive/reactive.iml" filepath="$PROJECT_DIR$/reactive/reactive.iml" />
+      <module fileurl="file://$PROJECT_DIR$/timber/timber.iml" filepath="$PROJECT_DIR$/timber/timber.iml" />
     </modules>
   </component>
 </project>
