@@ -37,6 +37,7 @@ dependencies {
 # Core
 ##### The core module provides the following classes and extensions.
 
+
 ### Bundlify
 Let's you create bundles in a simple way and with operators.
 ```
@@ -68,7 +69,6 @@ Let's you create bundles in a simple way and with operators.
         "key" in bundle
         
 ```
-
 ### GlobalSharedPreferences
 GlobalSharedPrefrences a SharedPreferences object that let you use it anywhere without the direct access to context. The class also contains an easy usage
 ```
@@ -98,7 +98,6 @@ pref {
         (GlobalSharedPreferences += "keyPair" to 6L).apply()
         (GlobalSharedPreferences - "key").apply()
 ```
-
 ### Fragment
 An easier way to create a fragment using a dsl extension of fragment 
 ```
@@ -111,9 +110,9 @@ fragment(layoutRes = R.layout.fragment_test) {
             }
         } //return's a ready to use fragment
 ```
-
 ### Notification 
-
+//You can use but it did not get tested so i'm not writing description 
+//will be added soon
 ### GenericRecyclerAdapter
 An abstract extension of RecyclerView.Adapter that reduces the creating time of a RecyclerView.
 In additon you receive a lot of extension function to make the adapter work simieler to List so by extending the class you receive a lot of bounses
@@ -137,22 +136,21 @@ class CustomRecyclerAdapter(context: Context, // Require context to make it easi
 }
 extension given 
 val customRecyclerAdapter = CustomRecyclerAdapter(this, ArrayList())
-        customRecyclerAdapter - "" //removing item and notifying the adapter if you are on uiThread
-        customRecyclerAdapter - 2 //removing item and notifying the adapter if you are on uiThread
-        customRecyclerAdapter + "" //adding item and notifying the adapter if you are on uiThread
-        customRecyclerAdapter.add("",5)
-        customRecyclerAdapter[""] //getItem by object
-        customRecyclerAdapter[12] //getItem by position
-        customRecyclerAdapter - (1..4) //removing position range and notifying the adapter if you are on uiThread
-        customRecyclerAdapter - (listOf("", "")) //removing list of objects and notifying the adapter if you are on uiThread
-        customRecyclerAdapter.setItem(5, "gg")
-        customRecyclerAdapter.clear()
-        customRecyclerAdapter.count()
-        customRecyclerAdapter.setItems(listOf("", "", "", "", "")) //replace the current list and notifying the adapter if you are on uiThread
-        customRecyclerAdapter.isEmpty()
-        customRecyclerAdapter.isNotEmpty()
+customRecyclerAdapter - "" //removing item and notifying the adapter if you are on uiThread
+customRecyclerAdapter - 2 //removing item and notifying the adapter if you are on uiThread
+customRecyclerAdapter + "" //adding item and notifying the adapter if you are on uiThread
+customRecyclerAdapter.add("",5)
+customRecyclerAdapter[""] //getItem by object
+customRecyclerAdapter[12] //getItem by position
+customRecyclerAdapter - (1..4) //removing position range and notifying the adapter if you are on uiThread
+customRecyclerAdapter - (listOf("", "")) //removing list of objects and notifying the adapter if you are on uiThread
+customRecyclerAdapter.setItem(5, "gg")
+customRecyclerAdapter.clear()
+customRecyclerAdapter.count()
+customRecyclerAdapter.setItems(listOf("", "", "", "", "")) //replace the current list and notifying the adapter if you are on uiThread
+customRecyclerAdapter.isEmpty()
+customRecyclerAdapter.isNotEmpty()
 ```
-
 ### threads
 ```
         //single function to run in background
@@ -224,6 +222,30 @@ View(this).toggleVisibility()
 View(this).isVisible()
 ```
 ### collections
+```
+ val testMap = mapOf(0 to 9, 0 to 9, 0 to 9, 0 to 9, 0 to 9)
+val testSet = setOf(0 to 9, 0 to 9, 0 to 9, 0 to 9, 0 to 9)
+val testList = listOf(0 to 9, 0 to 9, 0 to 9, 0 to 9, 0 to 9)
+val testArrayList = ArrayList<Int>()
+
+testMap.isNullOrEmpty()
+testMap.isNotNullOrEmpty()
+
+testSet.isNullOrEmpty()
+testSet.isNotNullOrEmpty()
+
+testArrayList.isNullOrEmpty()
+testArrayList.isNotNullOrEmpty()
+testArrayList addIfNotExist 5
+testArrayList removeIfExist 5
+
+
+testList.isNullOrEmpty()
+testList.isNotNullOrEmpty()
+testList / 3 //returns a map of page number and the amount of items given in this case 3
+testList.random() //returns a random element from the list
+        
+```
 ### resourses
 Provides two extensions 
 ```
@@ -242,7 +264,6 @@ isLollipopOrAbove()  //boolean is current version is at least Lollipop(21)
 Context.isGranted("StringPermission") // boolean checks if the permission is granted or not
 
 ```
-
 ### ColorGenerator 
 A class with 2 lists of colors one normal colors and one material design colors 
 the class let's you get all the colors or a random color
@@ -312,7 +333,7 @@ jsonString.fromJson<LocationObject>() // A new LocationObject
  
  LocationObject
  
- @JsonIgnoreUnknown //A new annotation to make it easier to use jackson 
+ @JsonIgnoreUnknown //A new annotation to make it easier to use jackson  instad of @JsonIgnoreProperties(ignoreUnknown = true)
 data class LocationObject(val locationText: String, val locationCoordinates: Array<Double>)
 ```
 
@@ -329,7 +350,11 @@ Timber.d(someBoolean.toString())
 Timber.d(someObject)
 Timber.d(5)
 Timber.d(someBoolean)
-
+someObject.d()// no need to call Timber 
+someOtherObject.e()// no need to call Timber 
+someOtherObject.i()// no need to call Timber 
+someOtherObject.wtf()// no need to call Timber 
+someOtherObject.w()// no need to call Timber 
 ```
 
 License
