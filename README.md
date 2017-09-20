@@ -41,32 +41,40 @@ dependencies {
 ### Bundlify
 Let's you create bundles in a simple way and with operators.
 ```
-  val bundle = bundle {
-            //put key(String), value(Any)
-            //String
-            put("key", "value")
-            //Int
-            put("key", 1)
-            //Long
-            put("key", 1L)
-            //Float
-            put("key", 1.5131F)
-            //parcelable
-            put("key", Parcelable) //Some parcelable object
-            //parcelable array
-            put("key", Array<Parcelable>()) //Some parcelable Array
-            //parcelable arrayList
-            put("key", ArrayList<Parcelable>())//Some parcelable ArrayList
+val bundle = bundle {
+    //put key(String), value(Any)
+    
+    //String
+    put("key", "value")
+    
+    //Int
+    put("key", 1)
+    
+    //Long
+    put("key", 1L)
+    
+    //Float
+    put("key", 1.5131F)
+    
+    //parcelable
+    put("key", Parcelable) //Some parcelable object
+    
+    //parcelable array
+    put("key", Array<Parcelable>()) //Some parcelable Array
+    
+    //parcelable arrayList
+    put("key", ArrayList<Parcelable>())//Some parcelable ArrayList
 
-            "key" += 5
-            this += "keyPair" to 6L
+    "key" += 5
+    this += "keyPair" to 6L
 
-            //remove
-            remove("keyToRemove")
-            this - ""
+    //remove
+    remove("keyToRemove")
+    
+    this - ""
 
-        }
-        "key" in bundle
+}
+"key" in bundle
         
 ```
 ### GlobalSharedPreferences
@@ -77,12 +85,16 @@ First initialize it in your application class
 GlobalSharedPreferences.initialize(application, "sharedPreferencesName")
 pref {
             //put key(String), value(Any)
+            
             //String
             put("key", "value")
+            
             //Int
             put("key", 1)
+            
             //Long
             put("key", 1L)
+            
             //Float
             put("key", 1.5131F)
            
@@ -94,8 +106,11 @@ pref {
             this - ""
             
         } //not need to apply inside pref
+        
         "key" in GlobalSharedPreferences // return's Boolean
+        
         (GlobalSharedPreferences += "keyPair" to 6L).apply()
+        
         (GlobalSharedPreferences - "key").apply()
 ```
 ### Fragment
@@ -135,20 +150,35 @@ class CustomRecyclerAdapter(context: Context, // Require context to make it easi
     }
 }
 extension given 
+
 val customRecyclerAdapter = CustomRecyclerAdapter(this, ArrayList())
+
 customRecyclerAdapter - "" //removing item and notifying the adapter if you are on uiThread
+
 customRecyclerAdapter - 2 //removing item and notifying the adapter if you are on uiThread
+
 customRecyclerAdapter + "" //adding item and notifying the adapter if you are on uiThread
+
 customRecyclerAdapter.add("",5)
+
 customRecyclerAdapter[""] //getItem by object
+
 customRecyclerAdapter[12] //getItem by position
+
 customRecyclerAdapter - (1..4) //removing position range and notifying the adapter if you are on uiThread
+
 customRecyclerAdapter - (listOf("", "")) //removing list of objects and notifying the adapter if you are on uiThread
+
 customRecyclerAdapter.setItem(5, "gg")
+
 customRecyclerAdapter.clear()
+
 customRecyclerAdapter.count()
+
 customRecyclerAdapter.setItems(listOf("", "", "", "", "")) //replace the current list and notifying the adapter if you are on uiThread
+
 customRecyclerAdapter.isEmpty()
+
 customRecyclerAdapter.isNotEmpty()
 ```
 ### threads
@@ -165,18 +195,22 @@ customRecyclerAdapter.isNotEmpty()
         runOnUI {
 
         }
+        
         //run's a task after 2 secounds on UI thread
         runAfter(millis = 2000, thread = RunnableThread.UI) {
 
         }
+        
         //run's a task after 2 secounds in background
         runAfter(millis = 2000, thread = RunnableThread.BACKGROUND) {
 
         }
+        
         //run's a task after 2 secounds on the current thread
         runAfter(millis = 2000, thread = RunnableThread.CURRENT) {
 
         }
+        
         //run's a task after 2 secounds
         runAfter(millis = 2000) {
 
@@ -194,6 +228,7 @@ group += TextView(this)
 group += TextView(this)
 "in" in TextView(this)
 group -= TextView(this)
+
 group[0]
 for (view in group.iterator()) {
 
@@ -214,6 +249,7 @@ View(this).onClick {
 View(this).onLongClick {
     
 }
+
 View(this).hide()
 View(this).hide()
 View(this).show()
