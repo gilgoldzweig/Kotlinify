@@ -32,8 +32,8 @@ dependencies {
     implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     testImplementation 'junit:junit:4.12'
-    implementation 'com.github.GilGoldzweig.kotlinify:Timber:0.9'
-    implementation 'com.github.GilGoldzweig.kotlinify:core:0.9'
-    implementation 'com.github.GilGoldzweig.kotlinify:reactive:0.9'
-    implementation 'com.github.GilGoldzweig.kotlinify:Jackson:0.9'
+    implementation 'com.github.GilGoldzweig.kotlinify:timber:0.9.1'
+    implementation 'com.github.GilGoldzweig.kotlinify:core:0.9.1'
+    implementation 'com.github.GilGoldzweig.kotlinify:reactive:0.9.1'
+    implementation 'com.github.GilGoldzweig.kotlinify:jackson:0.9.1'
 }

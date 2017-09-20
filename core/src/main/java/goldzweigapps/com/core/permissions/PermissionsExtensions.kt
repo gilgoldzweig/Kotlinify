@@ -12,8 +12,9 @@ import android.support.v4.content.ContextCompat
  */
 @SuppressLint("NewApi")
 fun isVersionAbove(version: Int) = Build.VERSION.SDK_INT >= version
+
 @TargetApi(Build.VERSION_CODES.M)
-fun isApi23OrAbove() = isVersionAbove(Build.VERSION_CODES.M)
+fun isMarshmallowOrAbove() = isVersionAbove(Build.VERSION_CODES.M)
 fun isLollipopOrAbove() = isVersionAbove(Build.VERSION_CODES.LOLLIPOP)
 
 infix fun Context.isGranted(permission: String) =

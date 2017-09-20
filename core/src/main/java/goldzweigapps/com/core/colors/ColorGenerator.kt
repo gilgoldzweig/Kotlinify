@@ -38,6 +38,16 @@ class ColorGenerator private constructor(private val mColors: List<Int>) {
                 0xffa1887f.toInt(),
                 0xff90a4ae.toInt()
         )
+        var DEFAULT_COLOR_LIST: List<Int> = listOf(
+                0xfff16364.toInt(),
+                0xfff58559.toInt(),
+                0xfff9a43e.toInt(),
+                0xffe4c62e.toInt(),
+                0xff67bf74.toInt(),
+                0xff59a2be.toInt(),
+                0xff2093cd.toInt(),
+                0xffad62a7.toInt(),
+                0xff805781.toInt())
 
         init {
             DEFAULT = create(listOf(

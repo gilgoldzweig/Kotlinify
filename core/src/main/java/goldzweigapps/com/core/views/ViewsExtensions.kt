@@ -34,7 +34,10 @@ fun View.invisible() {
 //endregion view visibility
 
 fun View.onClick(onClick: () -> Unit) = setOnClickListener { onClick.invoke() }
-fun View.onLongClick(onLongClick: () -> Boolean) = setOnLongClickListener { onLongClick.invoke() }
+fun View.onLongClick(onLongClick: () -> Unit) = setOnLongClickListener {
+    onLongClick.invoke()
+    false
+}
 
 operator fun TextView.plusAssign(valueToAdd: String) {
     text = "$text$valueToAdd"

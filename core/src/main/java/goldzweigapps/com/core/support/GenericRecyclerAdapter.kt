@@ -15,7 +15,7 @@ import goldzweigapps.com.core.threads.isUiThread
 
 @Suppress("unused")
 abstract class GenericRecyclerAdapter<E>(context: Context,
-                                         var genericList: ArrayList<E>,
+                                         var genericList: ArrayList<E> = ArrayList(),
                                          @LayoutRes private val layoutRes: Int) :
         RecyclerView.Adapter<GenericRecyclerAdapter<E>.GenericViewHolder>() {
 
