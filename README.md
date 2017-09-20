@@ -3,7 +3,7 @@
 ![Release](https://jitpack.io/v/GilGoldzweig/kotlinify.svg)
 
 
-Kotlinify is a suite of extention and classes for easier android development in kotlin. 
+Kotlinify is a suite of extension and classes for easier daily android development in kotlin. 
 I've created it after my own needs and i decided i should publish it and save time for others.
 
 The library contanis 4 modules:
