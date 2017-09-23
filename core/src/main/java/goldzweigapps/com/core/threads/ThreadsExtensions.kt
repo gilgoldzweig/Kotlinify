@@ -33,13 +33,14 @@ fun runAfter(millis: Long,
              thread: RunnableThread = RunnableThread.CURRENT,
              func: () -> Unit): Boolean =
         when(thread) {
-                 RunnableThread.CURRENT -> handler.postDelayed(func, millis)
-                 RunnableThread.BACKGROUND -> {
-                     runInBackground { handler.postDelayed(func, millis) }
-                     true
-             }
-                 RunnableThread.UI -> runOnUI { handler.postDelayed(func, millis) }
-             }
+            RunnableThread.CURRENT -> handler.postDelayed(func, millis)
+            RunnableThread.BACKGROUND -> {
+                handler.postDelayed({ runInBackground { func.invoke() } }, millis)
+                true
+            }
+            RunnableThread.UI -> handler.postDelayed({ runOnUI { func.invoke() } }, millis)
+        }
+
 /**
  * run a function on ui thread
  * @param func
@@ -70,7 +71,7 @@ fun runOnUI(func: () -> Unit): Boolean {
  * @return Unit
  */
 fun runInBackground(vararg functions: () -> Unit) {
-    BackgroundTask.execute(*functions)
+    BackgroundTask().execute(*functions)
 }
 
 /**
@@ -84,10 +85,10 @@ fun runInBackground(vararg functions: () -> Unit) {
  * @return Unit
  */
 fun runInBackground(func: () -> Unit) {
-    BackgroundTask.execute(func)
+    BackgroundTask().execute(func)
 }
 
-object BackgroundTask : AsyncTask<() -> Unit, Any, Any>() {
+class BackgroundTask : AsyncTask<() -> Unit, Any, Any>() {
     override fun doInBackground(vararg params: (() -> Unit)?): Any {
         params.forEach { it?.invoke() }
         return false

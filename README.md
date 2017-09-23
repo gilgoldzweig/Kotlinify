@@ -128,6 +128,7 @@ fragment(layoutRes = R.layout.fragment_test) {
 ### Notification 
 //You can use but it did not get tested so i'm not writing description 
 //will be added soon
+
 ### GenericRecyclerAdapter
 An abstract extension of RecyclerView.Adapter that reduces the creating time of a RecyclerView.
 In additon you receive a lot of extension function to make the adapter work simieler to List so by extending the class you receive a lot of bounses

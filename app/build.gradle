@@ -23,7 +23,10 @@ android {
     }
 }
 repositories {
-    maven { url 'https://jitpack.io' }
+ maven { url 'https://jitpack.io' }
+    maven {
+        url  "https://dl.bintray.com/gilgoldzweig/Kotlinify"
+    }
 }
 
 dependencies {
@@ -32,8 +35,10 @@ dependencies {
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     testImplementation 'junit:junit:4.12'
     //    implementationProject('timber')
-    implementation 'com.github.GilGoldzweig.kotlinify:core:1.0.0'
-    implementation 'com.github.GilGoldzweig.kotlinify:reactive:1.0.0'
-    implementation 'com.github.GilGoldzweig.kotlinify:jackson:1.0.0'
+//    implementation 'com.github.GilGoldzweig.kotlinify:core:1.0.1'
+//    implementation 'com.github.GilGoldzweig.kotlinify:timber:1.0.1'
+//    implementation 'com.github.GilGoldzweig.kotlinify:reactive:1.0.0'
+//    implementation 'com.github.GilGoldzweig.kotlinify:jackson:1.0.0'
     implementation project(':timber')
+    implementation project(':core')
 }

@@ -17,11 +17,6 @@ class NotificationManager(val context: Context) {
     val notificationChannelGroups = ArrayList<NotificationChannelGroup>()
     val notifications = ArrayList<Pair<Int, Notification>>()
 
-    inline fun notification(notificationId: Int, channelId: String, notificationFunc: Notification.() -> Unit): Notification {
-        val notification = Notification(context, channelId).apply(notificationFunc)
-        notifications + notificationId to notification
-        return notification
-    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun channel(id: String = NotificationChannel.DEFAULT_CHANNEL_ID,

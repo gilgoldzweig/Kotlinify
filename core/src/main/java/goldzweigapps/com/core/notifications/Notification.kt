@@ -17,7 +17,7 @@ import android.support.annotation.RequiresApi
  * Created by gilgoldzweig on 04/09/2017.
  */
 class Notification(context: Context, channelId: String) :
-        android.app.Notification.Builder(context, channelId) {
+        android.app.Notification.Builder(context) {
     var title: String = ""
     set(value) {
         setContentTitle(value)
@@ -42,6 +42,10 @@ class Notification(context: Context, channelId: String) :
     var autoCancel: Boolean = true
         set(value) {
             setAutoCancel(value)
+        }
+    var intent: PendingIntent? = null
+        set(value) {
+            if (value != null) setContentIntent(value)
         }
 
     val actions = ArrayList<android.app.Notification.Action>()
@@ -82,6 +86,15 @@ inline fun Context.notification(channelId: String, notificationId: Int,
         Notification(this, channelId)
                 .apply(notification)
                 .build()
+
+@RequiresApi(Build.VERSION_CODES.JELLY_BEAN)
+inline fun goldzweigapps.com.core.notifications.NotificationManager.notification(channelId: String, notificationId: Int,
+                                                                                 notificationFunc: Notification.() -> Unit): Notification {
+    val notification = Notification(context, channelId)
+            .apply(notificationFunc)
+    notifications + notificationId to notification
+    return notification
+}
 
 
 

@@ -9,7 +9,45 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
+//        Timber.plant(Timber.DebugTree())
+//        runAfter(2000, RunnableThread.BACKGROUND) {
+//            "run a function in background".d()
+//            if (isUiThread()) "Something is not working".e()
+//        }
+//        runAfter(3000, RunnableThread.UI) {
+//            "run a function on ui".d()
+//            if (isUiThread()) "Something is working".d()
+//        }
+//        notificationManager {
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+//                showSingle(15,notification("channel", 15) {
+//                    title = "testTitle"
+//                    contentText = "contextTextTest"
+//                    smallIconRes = R.mipmap.ic_launcher_round
+//                    intent = PendingIntent.getActivity(this@MainActivity,
+//                            5,
+//                            Intent(),
+//                            PendingIntent.FLAG_UPDATE_CURRENT)
+//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+//                        action {
+//                            title = "customTitle"
+//                            icon = Icon.createWithResource(this@MainActivity, R.mipmap.ic_launcher_round)
+//                            intent = PendingIntent.getActivity(this@MainActivity,
+//                                    5,
+//                                    Intent(),
+//                                    PendingIntent.FLAG_UPDATE_CURRENT)
+//                        }
+//                    }
+//                })
+//            }
+//        }
+//
+//        runInBackground {
+//            if (isUiThread()) "Something is not working".e()
+//            runOnUiThread {
+//                if (isUiThread()) "Something is working".d()
+//            }
+//        }
 
 //        locationObject.toJson() //{"locationText":"Tel-Aviv","locationCoordinates":[5.152155,1512.512]}
 //        locationObject.toPrettyJson()
