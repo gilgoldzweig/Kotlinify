@@ -9,7 +9,6 @@ import android.os.Looper
  * Created by gilgoldzweig on 04/09/2017.
  */
 private val handler = Handler()
-private var backgroundTask: BackgroundTask? = null
 
 /**
  * @return current thread is UI thread or not
@@ -71,10 +70,7 @@ fun runOnUI(func: () -> Unit): Boolean {
  * @return Unit
  */
 fun runInBackground(vararg functions: () -> Unit) {
-    if (backgroundTask == null) {
-        backgroundTask = BackgroundTask()
-    }
-    backgroundTask!!.execute(*functions)
+    BackgroundTask.execute(*functions)
 }
 
 /**
@@ -88,13 +84,10 @@ fun runInBackground(vararg functions: () -> Unit) {
  * @return Unit
  */
 fun runInBackground(func: () -> Unit) {
-    if (backgroundTask == null) {
-        backgroundTask = BackgroundTask()
-    }
-    backgroundTask!!.execute(func)
+    BackgroundTask.execute(func)
 }
 
-private class BackgroundTask : AsyncTask<() -> Unit, Any, Any>() {
+object BackgroundTask : AsyncTask<() -> Unit, Any, Any>() {
     override fun doInBackground(vararg params: (() -> Unit)?): Any {
         params.forEach { it?.invoke() }
         return false

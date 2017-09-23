@@ -8,6 +8,7 @@ import goldzweigapps.com.core.exceptions.InitializeException
 
 /**
  * Created by gilgoldzweig on 04/09/2017.
+ *
  */
 @Suppress("unused")
 object GlobalSharedPreferences  {
@@ -79,50 +80,34 @@ object GlobalSharedPreferences  {
     //endregion contains
 
     //region put
-    fun put(key: String, value: String): GlobalSharedPreferences {
-        edit().putString(key, value)
-        return this
-    }
+    fun put(key: String, value: String) = also { edit().putString(key, value) }
 
-    fun put(key: String, value: Int): GlobalSharedPreferences {
-        edit().putInt(key, value)
-        return this
-    }
+    fun put(key: String, value: Int) = also { edit().putInt(key, value) }
 
-    fun put(key: String, value: Long): GlobalSharedPreferences {
-        edit().putLong(key, value)
-        return this
-    }
+    fun put(key: String, value: Long) = also { edit().putLong(key, value) }
 
-    fun put(key: String, value: Boolean): GlobalSharedPreferences {
-        edit().putBoolean(key, value)
-        return this
-    }
+    fun put(key: String, value: Boolean) = also { edit().putBoolean(key, value) }
 
-    fun put(key: String, value: Float): GlobalSharedPreferences {
-        edit().putFloat(key, value)
-        return this
-    }
+    fun put(key: String, value: Float) = also { edit().putFloat(key, value) }
 
-    fun put(key: String, value: Set<String>): GlobalSharedPreferences {
-        edit().putStringSet(key, value)
-        return this
-    }
+    fun put(key: String, value: Set<String>) = also { edit().putStringSet(key, value) }
 
     infix fun String.put(value: Any) {
-        when(value) {
-            is String ->
-                put(this, value)
-            is Int ->
-                put(this, value)
-            is Long ->
-                put(this, value)
-            is Boolean ->
-                put(this, value)
-            is Float ->
-                put(this, value)
-            is Set<*> -> {
-                put(this, value.map { it.toString() }.toSet())
+        also {
+            when (value) {
+                is String ->
+                    put(this, value)
+                is Int ->
+                    put(this, value)
+                is Long ->
+                    put(this, value)
+                is Boolean ->
+                    put(this, value)
+                is Float ->
+                    put(this, value)
+                is Set<*> -> {
+                    put(this, value.map { it.toString() }.toSet())
+                }
             }
         }
     }
@@ -138,10 +123,7 @@ object GlobalSharedPreferences  {
     //endregion put
 
     //region remove
-    fun remove(key: String): GlobalSharedPreferences {
-        edit().remove(key)
-        return this
-    }
+    fun remove(key: String) = also { edit().remove(key) }
 
     operator fun minus(key: String) = remove(key)
     //endregion remove
@@ -166,8 +148,9 @@ object GlobalSharedPreferences  {
 
 
 inline fun pref(sharedPreferences: GlobalSharedPreferences.() -> Unit) = with(GlobalSharedPreferences) {
-    sharedPreferences()
-    apply()
-    this
+    also {
+        sharedPreferences()
+        apply()
+    }
 }
 

@@ -8,11 +8,8 @@ import java.util.*
 import java.util.Collections.unmodifiableList
 import java.util.regex.Pattern
 
-class Timber private constructor() {
-
-    init {
-        throw AssertionError("No instances.")
-    }
+@Suppress("unused")
+object Timber {
 
     /**
      * A facade for handling logging calls. Install instances via [Timber.plant()][.plant].
@@ -176,31 +173,10 @@ class Timber private constructor() {
             prepareLog(priority, t, null)
         }
 
-        /**
-         * Return whether a message at `priority` should be logged.
-         *
-         */
-        @Deprecated("use {@link #isLoggable(String, int)} instead.")
-        protected fun isLoggable(priority: Int): Boolean {
-            return true
-        }
-
-        /**
-         * Return whether a message at `priority` or `tag` should be logged.
-         */
-        protected fun isLoggable(tag: String?, priority: Int): Boolean {
-            //            return isLoggable(priority);
-            return true // deprecated call
-        }
-
         private fun prepareLog(priority: Int, t: Throwable?, messageObject: Any?, vararg args: Any) {
             var message: String? = messageObject.toString()
             // Consume tag even when message is not loggable so that next message is correctly tagged.
             val tag = tag
-
-            if (!isLoggable(tag, priority)) {
-                return
-            }
             if (message != null && message.isEmpty()) {
                 message = null
             }
@@ -224,7 +200,7 @@ class Timber private constructor() {
         /**
          * Formats a log message workWith optional arguments.
          */
-        protected fun formatMessage(message: String, args: Array<out Any>): String =
+        private fun formatMessage(message: String, args: Array<out Any>): String =
                 String.format(message, *args)
 
         private fun getStackTraceString(t: Throwable): String {
@@ -276,7 +252,7 @@ class Timber private constructor() {
          *
          * Note: This will not be called if a [manual tag][.tag] was specified.
          */
-        protected fun createStackElementTag(element: StackTraceElement): String {
+        private fun createStackElementTag(element: StackTraceElement): String {
             var tag = element.className
             val m = ANONYMOUS_CLASS.matcher(tag)
             if (m.find()) {
@@ -294,31 +270,31 @@ class Timber private constructor() {
          *
          * {@inheritDoc}
          */
-        override fun log(priority: Int, tag: String?, messageObject: Any, t: Throwable?) {
-            var message = messageObject.toString()
-            if (messageObject is Exception) {
-                message = (messageObject).cause.toString()
+        override fun log(priority: Int, tag: String?, message: Any, t: Throwable?) {
+            var messageString = message.toString()
+            if (message is Exception) {
+                messageString = message.cause.toString()
             }
 
 
-            if (message.length < MAX_LOG_LENGTH) {
+            if (messageString.length < MAX_LOG_LENGTH) {
                 if (priority == Log.ASSERT) {
-                    Log.wtf(tag, message)
+                    Log.wtf(tag, messageString)
                 } else {
-                    Log.println(priority, tag, message)
+                    Log.println(priority, tag, messageString)
                 }
                 return
             }
 
             // Split by line, then ensure each line can fit into Log's maximum length.
             var i = 0
-            val length = message.length
+            val length = messageString.length
             while (i < length) {
-                var newline = message.indexOf('\n', i)
+                var newline = messageString.indexOf('\n', i)
                 newline = if (newline != -1) newline else length
                 do {
                     val end = Math.min(newline, i + MAX_LOG_LENGTH)
-                    val part = message.substring(i, end)
+                    val part = messageString.substring(i, end)
                     if (priority == Log.ASSERT) {
                         Log.wtf(tag, part)
                     } else {
@@ -338,505 +314,511 @@ class Timber private constructor() {
         }
     }
 
-    companion object {
-        private val TREE_ARRAY_EMPTY = arrayOfNulls<Tree>(0)
-        // Both fields guarded by 'FOREST'.
-        private val FOREST = ArrayList<Tree>()
-        @Volatile private var forestAsArray = TREE_ARRAY_EMPTY
-        /**
-         * A [Tree] that delegates to all planted trees in the [forest][.FOREST].
-         */
-        private val TREE_OF_SOULS = object : Tree() {
-            override fun v(message: Any?, vararg args: Any) {
-                val forest = forestAsArray
 
-                var i = 0
-                val count = forest.size
-                while (i < count) {
-                    forest[i]?.v(message, *args)
-                    i++
-                }
-            }
-
-            override fun v(t: Throwable, message: Any, vararg args: Any) {
-                val forest = forestAsArray
-
-                var i = 0
-                val count = forest.size
-                while (i < count) {
-                    forest[i]?.v(t, message, *args)
-                    i++
-                }
-            }
-
-            override fun v(t: Throwable) {
-                val forest = forestAsArray
-
-                var i = 0
-                val count = forest.size
-                while (i < count) {
-                    forest[i]?.v(t)
-                    i++
-                }
-            }
-
-            override fun d(message: Any, vararg args: Any) {
-                val forest = forestAsArray
-
-                var i = 0
-                val count = forest.size
-                while (i < count) {
-                    forest[i]?.d(message, *args)
-                    i++
-                }
-            }
-
-            override fun d(t: Throwable, message: Any, vararg args: Any) {
-                val forest = forestAsArray
-
-                var i = 0
-                val count = forest.size
-                while (i < count) {
-                    forest[i]?.d(t, message, *args)
-                    i++
-                }
-            }
-
-            override fun d(t: Throwable) {
-                val forest = forestAsArray
-
-                var i = 0
-                val count = forest.size
-                while (i < count) {
-                    forest[i]?.d(t)
-                    i++
-                }
-            }
-
-            override fun i(message: Any, vararg args: Any) {
-                val forest = forestAsArray
-
-                var i = 0
-                val count = forest.size
-                while (i < count) {
-                    forest[i]?.i(message, *args)
-                    i++
-                }
-            }
-
-            override fun i(t: Throwable, message: Any, vararg args: Any) {
-                val forest = forestAsArray
-
-                var i = 0
-                val count = forest.size
-                while (i < count) {
-                    forest[i]?.i(t, message, *args)
-                    i++
-                }
-            }
-
-            override fun i(t: Throwable) {
-                val forest = forestAsArray
-
-                var i = 0
-                val count = forest.size
-                while (i < count) {
-                    forest[i]?.i(t)
-                    i++
-                }
-            }
-
-            override fun w(message: Any, vararg args: Any) {
-                val forest = forestAsArray
-
-                var i = 0
-                val count = forest.size
-                while (i < count) {
-                    forest[i]?.w(message, *args)
-                    i++
-                }
-            }
-
-            override fun w(t: Throwable, message: Any, vararg args: Any) {
-                val forest = forestAsArray
-
-                var i = 0
-                val count = forest.size
-                while (i < count) {
-                    forest[i]?.w(t, message, *args)
-                    i++
-                }
-            }
-
-            override fun w(t: Throwable) {
-                val forest = forestAsArray
-
-                var i = 0
-                val count = forest.size
-                while (i < count) {
-                    forest[i]?.w(t)
-                    i++
-                }
-            }
-
-            override fun e(message: Any, vararg args: Any) {
-                val forest = forestAsArray
-
-                var i = 0
-                val count = forest.size
-                while (i < count) {
-                    forest[i]?.e(message, *args)
-                    i++
-                }
-            }
-
-            override fun e(t: Throwable, message: Any, vararg args: Any) {
-                val forest = forestAsArray
-
-                var i = 0
-                val count = forest.size
-                while (i < count) {
-                    forest[i]?.e(t, message, *args)
-                    i++
-                }
-            }
-
-            override fun e(t: Throwable) {
-                val forest = forestAsArray
-
-                var i = 0
-                val count = forest.size
-                while (i < count) {
-                    forest[i]?.e(t)
-                    i++
-                }
-            }
-
-            override fun wtf(message: Any, vararg args: Any) {
-                val forest = forestAsArray
-
-                var i = 0
-                val count = forest.size
-                while (i < count) {
-                    forest[i]?.wtf(message, *args)
-                    i++
-                }
-            }
-
-            override fun wtf(t: Throwable, message: Any, vararg args: Any) {
-                val forest = forestAsArray
-
-                var i = 0
-                val count = forest.size
-                while (i < count) {
-                    forest[i]?.wtf(t, message, *args)
-                    i++
-                }
-            }
-
-            override fun wtf(t: Throwable) {
-                val forest = forestAsArray
-
-                var i = 0
-                val count = forest.size
-                while (i < count) {
-                    forest[i]?.wtf(t)
-                    i++
-                }
-            }
-
-            override fun log(priority: Int, message: Any, vararg args: Any) {
-                val forest = forestAsArray
-
-                var i = 0
-                val count = forest.size
-                while (i < count) {
-                    forest[i]?.log(priority, message, *args)
-                    i++
-                }
-            }
-
-            override fun log(priority: Int, t: Throwable, message: Any, vararg args: Any) {
-                val forest = forestAsArray
-
-                var i = 0
-                val count = forest.size
-                while (i < count) {
-                    forest[i]?.log(priority, t, message, *args)
-                    i++
-                }
-            }
-
-            override fun log(priority: Int, t: Throwable) {
-                val forest = forestAsArray
-
-                var i = 0
-                val count = forest.size
-                while (i < count) {
-                    forest[i]?.log(priority, t)
-                    i++
-                }
-            }
-
-            override fun log(priority: Int, tag: String?, message: Any, t: Throwable?) {
-                throw AssertionError("Missing override for log method.")
-            }
-        }
-
-        /**
-         * Log a verbose message workWith optional format args.
-         */
-        fun v(message: Any, vararg args: Any) {
-            TREE_OF_SOULS.v(message, *args)
-        }
-
-        /**
-         * Log a verbose exception and a message workWith optional format args.
-         */
-        fun v(t: Throwable, message: Any, vararg args: Any) {
-            TREE_OF_SOULS.v(t, message, *args)
-        }
-
-        /**
-         * Log a verbose exception.
-         */
-        fun v(t: Throwable) {
-            TREE_OF_SOULS.v(t)
-        }
-
-        /**
-         * Log a debug message workWith optional format args.
-         */
-        fun d(message: Any, vararg args: Any) {
-            TREE_OF_SOULS.d(message, *args)
-        }
-
-        /**
-         * Log a debug exception and a message workWith optional format args.
-         */
-        fun d(t: Throwable, message: Any, vararg args: Any) {
-            TREE_OF_SOULS.d(t, message, *args)
-        }
-
-        /**
-         * Log a debug exception.
-         */
-        fun d(t: Throwable) {
-            TREE_OF_SOULS.d(t)
-        }
-
-        /**
-         * Log an info message workWith optional format args.
-         */
-        fun i(message: Any, vararg args: Any) {
-            TREE_OF_SOULS.i(message, *args)
-        }
-
-        /**
-         * Log an info exception and a message workWith optional format args.
-         */
-        fun i(t: Throwable, message: Any, vararg args: Any) {
-            TREE_OF_SOULS.i(t, message, *args)
-        }
-
-        /**
-         * Log an info exception.
-         */
-        fun i(t: Throwable) {
-            TREE_OF_SOULS.i(t)
-        }
-
-        /**
-         * Log a warning message workWith optional format args.
-         */
-        fun w(message: Any, vararg args: Any) {
-            TREE_OF_SOULS.w(message, *args)
-        }
-
-        /**
-         * Log a warning exception and a message workWith optional format args.
-         */
-        fun w(t: Throwable, message: Any, vararg args: Any) {
-            TREE_OF_SOULS.w(t, message, *args)
-        }
-
-        /**
-         * Log a warning exception.
-         */
-        fun w(t: Throwable) {
-            TREE_OF_SOULS.w(t)
-        }
-
-        /**
-         * Log an error message workWith optional format args.
-         */
-        fun e(message: Any, vararg args: Any) {
-            TREE_OF_SOULS.e(message, *args)
-        }
-
-        /**
-         * Log an error exception and a message workWith optional format args.
-         */
-        fun e(t: Throwable, message: Any, vararg args: Any) {
-            TREE_OF_SOULS.e(t, message, *args)
-        }
-
-        /**
-         * Log an error exception.
-         */
-        fun e(t: Throwable) {
-            TREE_OF_SOULS.e(t)
-        }
-
-        /**
-         * Log an error exception.
-         */
-        fun e(e: Exception) {
-            if (e.cause == null) {
-                TREE_OF_SOULS.e(e.message ?: "")
-            } else {
-                TREE_OF_SOULS.e(e.cause!!)
-            }
-        }
-
-        /**
-         * Log an assert message workWith optional format args.
-         */
-        fun wtf(message: Any, vararg args: Any) {
-            TREE_OF_SOULS.wtf(message, *args)
-        }
-
-        /**
-         * Log an assert exception and a message workWith optional format args.
-         */
-        fun wtf(t: Throwable, message: Any, vararg args: Any) {
-            TREE_OF_SOULS.wtf(t, message, *args)
-        }
-
-        /**
-         * Log an assert exception.
-         */
-        fun wtf(t: Throwable) {
-            TREE_OF_SOULS.wtf(t)
-        }
-
-        /**
-         * Log at `priority` a message workWith optional format args.
-         */
-        fun log(priority: Int, message: Any, vararg args: Any) {
-            TREE_OF_SOULS.log(priority, message, *args)
-        }
-
-        /**
-         * Log at `priority` an exception and a message workWith optional format args.
-         */
-        fun log(priority: Int, t: Throwable, message: Any, vararg args: Any) {
-            TREE_OF_SOULS.log(priority, t, message, *args)
-        }
-
-        /**
-         * Log at `priority` an exception.
-         */
-        fun log(priority: Int, t: Throwable) {
-            TREE_OF_SOULS.log(priority, t)
-        }
-
-        /**
-         * A view into Timber's planted trees as a tree itself. This can be used for injecting a logger
-         * instance rather than using static methods or to facilitate testing.
-         */
-        fun asTree(): Tree {
-            return TREE_OF_SOULS
-        }
-
-        /**
-         * Set a one-time tag for use on the next logging call.
-         */
-        fun tag(tag: String): Tree {
+    private val TREE_ARRAY_EMPTY = arrayOfNulls<Tree>(0)
+    // Both fields guarded by 'FOREST'.
+    private val FOREST = ArrayList<Tree>()
+    @Volatile private var forestAsArray = TREE_ARRAY_EMPTY
+    /**
+     * A [Tree] that delegates to all planted trees in the [forest][.FOREST].
+     */
+    internal val TREE_OF_SOULS = object : Tree() {
+        override fun v(message: Any?, vararg args: Any) {
             val forest = forestAsArray
 
             var i = 0
             val count = forest.size
             while (i < count) {
-                forest[i]?.explicitTag?.set(tag)
+                forest[i]?.v(message, *args)
                 i++
             }
-            return TREE_OF_SOULS
         }
 
-        /**
-         * Add a new logging tree.
-         */
-        fun plant(tree: Tree?) {
-            if (tree == null) {
-                throw NullPointerException("tree == null")
-            }
-            if (tree === TREE_OF_SOULS) {
-                throw IllegalArgumentException("Cannot plant Timber into itself.")
-            }
-            synchronized(FOREST) {
-                FOREST.add(tree)
-                forestAsArray = FOREST.toTypedArray()
+        override fun v(t: Throwable, message: Any, vararg args: Any) {
+            val forest = forestAsArray
+
+            var i = 0
+            val count = forest.size
+            while (i < count) {
+                forest[i]?.v(t, message, *args)
+                i++
             }
         }
 
-        /**
-         * Adds new logging trees.
-         */
-        fun plant(vararg trees: Tree) {
+        override fun v(t: Throwable) {
+            val forest = forestAsArray
 
-            trees
-                    .filter { it === TREE_OF_SOULS }
-                    .forEach { throw IllegalArgumentException("Cannot plant Timber into itself.") }
-            synchronized(FOREST) {
-                Collections.addAll(FOREST, *trees)
-                forestAsArray = FOREST.toTypedArray()
+            var i = 0
+            val count = forest.size
+            while (i < count) {
+                forest[i]?.v(t)
+                i++
             }
         }
 
+        override fun d(message: Any, vararg args: Any) {
+            val forest = forestAsArray
 
-        /**
-         * Remove a planted tree.
-         */
-        fun uproot(tree: Tree) {
-
-            synchronized(FOREST) {
-                if (!FOREST.remove(tree)) {
-                    throw IllegalArgumentException("Cannot uproot tree which is not planted: " + tree)
-                }
-                forestAsArray = FOREST.toTypedArray()
+            var i = 0
+            val count = forest.size
+            while (i < count) {
+                forest[i]?.d(message, *args)
+                i++
             }
         }
 
-        /**
-         * Remove all planted trees.
-         */
-        fun uprootAll() {
-            synchronized(FOREST) {
-                FOREST.clear()
-                forestAsArray = TREE_ARRAY_EMPTY
+        override fun d(t: Throwable, message: Any, vararg args: Any) {
+            val forest = forestAsArray
+
+            var i = 0
+            val count = forest.size
+            while (i < count) {
+                forest[i]?.d(t, message, *args)
+                i++
             }
         }
 
-        /**
-         * Return a copy of all planted [trees][Tree].
-         */
-        fun forest(): List<Tree> {
-            synchronized(FOREST) {
-                return unmodifiableList(ArrayList(FOREST))
+        override fun d(t: Throwable) {
+            val forest = forestAsArray
+
+            var i = 0
+            val count = forest.size
+            while (i < count) {
+                forest[i]?.d(t)
+                i++
             }
         }
 
-        fun treeCount(): Int {
-            synchronized(FOREST) {
-                return FOREST.size
+        override fun i(message: Any, vararg args: Any) {
+            val forest = forestAsArray
+
+            var i = 0
+            val count = forest.size
+            while (i < count) {
+                forest[i]?.i(message, *args)
+                i++
             }
+        }
+
+        override fun i(t: Throwable, message: Any, vararg args: Any) {
+            val forest = forestAsArray
+
+            var i = 0
+            val count = forest.size
+            while (i < count) {
+                forest[i]?.i(t, message, *args)
+                i++
+            }
+        }
+
+        override fun i(t: Throwable) {
+            val forest = forestAsArray
+
+            var i = 0
+            val count = forest.size
+            while (i < count) {
+                forest[i]?.i(t)
+                i++
+            }
+        }
+
+        override fun w(message: Any, vararg args: Any) {
+            val forest = forestAsArray
+
+            var i = 0
+            val count = forest.size
+            while (i < count) {
+                forest[i]?.w(message, *args)
+                i++
+            }
+        }
+
+        override fun w(t: Throwable, message: Any, vararg args: Any) {
+            val forest = forestAsArray
+
+            var i = 0
+            val count = forest.size
+            while (i < count) {
+                forest[i]?.w(t, message, *args)
+                i++
+            }
+        }
+
+        override fun w(t: Throwable) {
+            val forest = forestAsArray
+
+            var i = 0
+            val count = forest.size
+            while (i < count) {
+                forest[i]?.w(t)
+                i++
+            }
+        }
+
+        override fun e(message: Any, vararg args: Any) {
+            val forest = forestAsArray
+
+            var i = 0
+            val count = forest.size
+            while (i < count) {
+                forest[i]?.e(message, *args)
+                i++
+            }
+        }
+
+        override fun e(t: Throwable, message: Any, vararg args: Any) {
+            val forest = forestAsArray
+
+            var i = 0
+            val count = forest.size
+            while (i < count) {
+                forest[i]?.e(t, message, *args)
+                i++
+            }
+        }
+
+        override fun e(t: Throwable) {
+            val forest = forestAsArray
+
+            var i = 0
+            val count = forest.size
+            while (i < count) {
+                forest[i]?.e(t)
+                i++
+            }
+        }
+
+        override fun wtf(message: Any, vararg args: Any) {
+            val forest = forestAsArray
+
+            var i = 0
+            val count = forest.size
+            while (i < count) {
+                forest[i]?.wtf(message, *args)
+                i++
+            }
+        }
+
+        override fun wtf(t: Throwable, message: Any, vararg args: Any) {
+            val forest = forestAsArray
+
+            var i = 0
+            val count = forest.size
+            while (i < count) {
+                forest[i]?.wtf(t, message, *args)
+                i++
+            }
+        }
+
+        override fun wtf(t: Throwable) {
+            val forest = forestAsArray
+
+            var i = 0
+            val count = forest.size
+            while (i < count) {
+                forest[i]?.wtf(t)
+                i++
+            }
+        }
+
+        override fun log(priority: Int, message: Any, vararg args: Any) {
+            val forest = forestAsArray
+
+            var i = 0
+            val count = forest.size
+            while (i < count) {
+                forest[i]?.log(priority, message, *args)
+                i++
+            }
+        }
+
+        override fun log(priority: Int, t: Throwable, message: Any, vararg args: Any) {
+            val forest = forestAsArray
+
+            var i = 0
+            val count = forest.size
+            while (i < count) {
+                forest[i]?.log(priority, t, message, *args)
+                i++
+            }
+        }
+
+        override fun log(priority: Int, t: Throwable) {
+            val forest = forestAsArray
+
+            var i = 0
+            val count = forest.size
+            while (i < count) {
+                forest[i]?.log(priority, t)
+                i++
+            }
+        }
+
+        override fun log(priority: Int, tag: String?, message: Any, t: Throwable?) {
+            throw AssertionError("Missing override for log method.")
+        }
+    }
+
+    /**
+     * Log a verbose message workWith optional format args.
+     */
+    fun v(message: Any, vararg args: Any) {
+        TREE_OF_SOULS.v(message, *args)
+    }
+
+    /**
+     * Log a verbose exception and a message workWith optional format args.
+     */
+    fun v(t: Throwable, message: Any, vararg args: Any) {
+        TREE_OF_SOULS.v(t, message, *args)
+    }
+
+    /**
+     * Log a verbose exception.
+     */
+    fun v(t: Throwable) {
+        TREE_OF_SOULS.v(t)
+    }
+
+    /**
+     * Log a debug message workWith optional format args.
+     */
+    fun d(
+            message: Any,
+            vararg args: Any
+    ) {
+        TREE_OF_SOULS.d(message, *args)
+    }
+
+    /**
+     * Log a debug exception and a message workWith optional format args.
+     */
+    fun d(t: Throwable, message: Any, vararg args: Any) {
+        TREE_OF_SOULS.d(t, message, *args)
+    }
+
+    /**
+     * Log a debug exception.
+     */
+    fun d(t: Throwable) {
+        TREE_OF_SOULS.d(t)
+    }
+
+    /**
+     * Log an info message workWith optional format args.
+     */
+    fun i(message: Any, vararg args: Any) {
+        TREE_OF_SOULS.i(message, *args)
+    }
+
+    /**
+     * Log an info exception and a message workWith optional format args.
+     */
+    fun i(t: Throwable, message: Any, vararg args: Any) {
+        TREE_OF_SOULS.i(t, message, *args)
+    }
+
+    /**
+     * Log an info exception.
+     */
+    fun i(t: Throwable) {
+        TREE_OF_SOULS.i(t)
+    }
+
+    /**
+     * Log a warning message workWith optional format args.
+     */
+    fun w(message: Any, vararg args: Any) {
+        TREE_OF_SOULS.w(message, *args)
+    }
+
+    /**
+     * Log a warning exception and a message workWith optional format args.
+     */
+    fun w(t: Throwable, message: Any, vararg args: Any) {
+        TREE_OF_SOULS.w(t, message, *args)
+    }
+
+    /**
+     * Log a warning exception.
+     */
+    fun w(t: Throwable) {
+        TREE_OF_SOULS.w(t)
+    }
+
+    /**
+     * Log an error message workWith optional format args.
+     */
+    fun e(message: Any, vararg args: Any) {
+        TREE_OF_SOULS.e(message, *args)
+    }
+
+    /**
+     * Log an error exception and a message workWith optional format args.
+     */
+    fun e(t: Throwable, message: Any, vararg args: Any) {
+        TREE_OF_SOULS.e(t, message, *args)
+    }
+
+    /**
+     * Log an error exception.
+     */
+    fun e(t: Throwable) {
+        TREE_OF_SOULS.e(t)
+    }
+
+    /**
+     * Log an error exception.
+     */
+    fun e(e: Exception) {
+        if (e.cause == null) {
+            TREE_OF_SOULS.e(e.message ?: "")
+        } else {
+            TREE_OF_SOULS.e(e.cause!!)
+        }
+    }
+
+    /**
+     * Log an assert message workWith optional format args.
+     */
+    fun wtf(message: Any, vararg args: Any) {
+        TREE_OF_SOULS.wtf(message, *args)
+    }
+
+    /**
+     * Log an assert exception and a message workWith optional format args.
+     */
+    fun wtf(t: Throwable, message: Any, vararg args: Any) {
+        TREE_OF_SOULS.wtf(t, message, *args)
+    }
+
+    /**
+     * Log an assert exception.
+     */
+    fun wtf(t: Throwable) {
+        TREE_OF_SOULS.wtf(t)
+    }
+
+    /**
+     * Log at `priority` a message workWith optional format args.
+     */
+    fun log(priority: Int, message: Any, vararg args: Any) {
+        TREE_OF_SOULS.log(priority, message, *args)
+    }
+
+    /**
+     * Log at `priority` an exception and a message workWith optional format args.
+     */
+    fun log(priority: Int, t: Throwable, message: Any, vararg args: Any) {
+        TREE_OF_SOULS.log(priority, t, message, *args)
+    }
+
+    /**
+     * Log at `priority` an exception.
+     */
+    fun log(priority: Int, t: Throwable) {
+        TREE_OF_SOULS.log(priority, t)
+    }
+
+    /**
+     * A view into Timber's planted trees as a tree itself. This can be used for injecting a logger
+     * instance rather than using static methods or to facilitate testing.
+     */
+    fun asTree() = TREE_OF_SOULS
+
+    /**
+     * Set a one-time tag for use on the next logging call.
+     */
+    fun tag(tag: String): Tree {
+        val forest = forestAsArray
+
+        var i = 0
+        val count = forest.size
+        while (i < count) {
+            forest[i]?.explicitTag?.set(tag)
+            i++
+        }
+        return TREE_OF_SOULS
+    }
+
+    /**
+     * Add a new logging tree.
+     */
+    fun plant(tree: Tree) {
+        if (tree === TREE_OF_SOULS) {
+            throw IllegalArgumentException("Cannot plant Timber into itself.")
+        }
+        synchronized(FOREST) {
+            FOREST.add(tree)
+            forestAsArray = FOREST.toTypedArray()
+        }
+    }
+
+    /**
+     * Adds new logging trees.
+     */
+    fun plant(vararg trees: Tree) {
+
+        trees
+                .filter { it === TREE_OF_SOULS }
+                .forEach { throw IllegalArgumentException("Cannot plant Timber into itself.") }
+        synchronized(FOREST) {
+            Collections.addAll(FOREST, *trees)
+            forestAsArray = FOREST.toTypedArray()
+        }
+    }
+
+
+    /**
+     * Remove a planted tree.
+     */
+    fun uproot(tree: Tree) {
+
+        synchronized(FOREST) {
+            if (!FOREST.remove(tree)) {
+                throw IllegalArgumentException("Cannot uproot tree which is not planted: " + tree)
+            }
+            forestAsArray = FOREST.toTypedArray()
+        }
+    }
+
+    /**
+     * Remove all planted trees.
+     */
+    fun uprootAll() {
+        synchronized(FOREST) {
+            FOREST.clear()
+            forestAsArray = TREE_ARRAY_EMPTY
+        }
+    }
+
+    /**
+     * Return a copy of all planted [trees][Tree].
+     */
+    fun forest(): List<Tree> {
+        synchronized(FOREST) {
+            return unmodifiableList(ArrayList(FOREST))
+        }
+    }
+
+    fun treeCount(): Int {
+        synchronized(FOREST) {
+            return FOREST.size
         }
     }
 }
 
-fun Any.d() = Timber.d(this)
-fun Any.e() = Timber.e(this)
-fun Any.i() = Timber.i(this)
-fun Any.wtf() = Timber.wtf(this)
-fun Any.w() = Timber.w(this)
+@Suppress("unused")
+fun Any?.d() = Timber.TREE_OF_SOULS.d(this ?: "null")
+
+@Suppress("unused")
+fun Any?.e() = Timber.TREE_OF_SOULS.e(this ?: "null")
+
+@Suppress("unused")
+fun Any?.i() = Timber.TREE_OF_SOULS.i(this ?: "null")
+
+@Suppress("unused")
+fun Any?.wtf() = Timber.TREE_OF_SOULS.wtf(this ?: "null")
+
+@Suppress("unused")
+fun Any?.w() = Timber.TREE_OF_SOULS.w(this ?: "null")

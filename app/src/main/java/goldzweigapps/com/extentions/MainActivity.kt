@@ -1,15 +1,16 @@
 package goldzweigapps.com.extentions
 
 import android.os.Bundle
-
 import android.support.v7.app.AppCompatActivity
+
 class MainActivity : AppCompatActivity() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-//
+
+
 //        locationObject.toJson() //{"locationText":"Tel-Aviv","locationCoordinates":[5.152155,1512.512]}
 //        locationObject.toPrettyJson()
 //        /**{
