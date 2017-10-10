@@ -27,10 +27,10 @@ inline fun <reified T : Activity> Context.start(noinline f: Intent.() -> Unit = 
             f(this)
         }
 
-fun Context.start(a: String, f: Intent.() -> Unit = {}) =
+fun Context.start(action: String, func: Intent.() -> Unit = {}) =
         startActivity {
-            action = a
-            f(this)
+            this.action = action
+            func(this)
         }
 
 fun Context.chooseActivity(title: String = "", f: Intent.() -> Unit) =

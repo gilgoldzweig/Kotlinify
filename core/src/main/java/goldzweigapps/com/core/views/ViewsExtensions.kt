@@ -2,9 +2,12 @@ package goldzweigapps.com.core.views
 
 import android.content.Context
 import android.support.annotation.LayoutRes
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.TextView
 import goldzweigapps.com.core.collections.asIterableIndexed
 import goldzweigapps.com.core.threads.runInBackground
@@ -34,10 +37,24 @@ fun View.invisible() {
 //endregion view visibility
 
 fun View.onClick(onClick: () -> Unit) = setOnClickListener { onClick.invoke() }
+
 fun View.onLongClick(onLongClick: () -> Unit) = setOnLongClickListener {
     onLongClick.invoke()
     false
 }
+
+fun EditText.onTextChange(onTextChange: (text: CharSequence) -> Unit) {
+    addTextChangedListener(object : TextWatcher {
+        override fun afterTextChanged(s: Editable?) = Unit
+
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
+
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) =
+                onTextChange(s ?: "")
+    })
+}
+
+
 
 operator fun TextView.plusAssign(valueToAdd: String) {
     text = "$text$valueToAdd"
@@ -46,7 +63,6 @@ operator fun TextView.minusAssign(valueToRemove: String) {
     text = text.toString().removePrefix(valueToRemove)
 }
 operator fun TextView.contains(value: String) = value in text.toString()
-
 
 
 

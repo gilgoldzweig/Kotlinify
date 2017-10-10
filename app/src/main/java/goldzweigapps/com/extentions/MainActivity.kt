@@ -5,10 +5,10 @@ import android.support.v7.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+//        findViewById<>()
 //        Timber.plant(Timber.DebugTree())
 //        runAfter(2000, RunnableThread.BACKGROUND) {
 //            "run a function in background".d()
@@ -49,15 +49,16 @@ class MainActivity : AppCompatActivity() {
 //            }
 //        }
 
+
 //        locationObject.toJson() //{"locationText":"Tel-Aviv","locationCoordinates":[5.152155,1512.512]}
 //        locationObject.toPrettyJson()
-//        /**{
-//        "locationText": "Tel-Aviv",
-//        "locationCoordinates": [
-//        5.152155,
-//        1512.512
-//        ]
-//        }*/
+        /**{
+        "locationText": "Tel-Aviv",
+        "locationCoordinates": [
+        5.152155,
+        1512.512
+        ]
+        }*/
 //        jsonString.fromJson<LocationObject>() // A new LocationObject
 //
 //
@@ -71,7 +72,7 @@ class MainActivity : AppCompatActivity() {
 //        runOnUI {
 //
 //        }
-//        runAfter(millis = 2000, thread = RunnableThread.UI) {
+//        runAfter(2000) {
 //
 //        }
 //        runAfter(millis = 2000, thread = RunnableThread.BACKGROUND) {
@@ -137,12 +138,20 @@ class MainActivity : AppCompatActivity() {
 //        }
 //        "key" in bundle
 //
+//        val re = Recy(this)
+//        re + UserKT()
+//        re - UserKT()
+//        for (count in 0..100) {
+//
+//        }
+
 //        fragment(layoutRes = R.layout.activity_main) {
 //
 //            arguments = bundle
 //            var name: TextView
 //            onViewCreated { view, context, savedInstanceState ->
 //                name = view.findViewById(R.id.text)
+//
 //            }
 //        }
 //        5.toDp()

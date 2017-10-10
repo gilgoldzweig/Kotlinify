@@ -1,9 +1,6 @@
 package goldzweigapps.com.reactive
 
-import io.reactivex.Completable
-import io.reactivex.Flowable
-import io.reactivex.Observable
-import io.reactivex.Single
+import io.reactivex.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
@@ -73,4 +70,16 @@ fun Completable.runSafeOnIO(): Completable =
                 .doOnError({ unsubscribeOn(newThread) })
                 .doOnComplete({ unsubscribeOn(newThread) })
 
+
+fun <T> Maybe<T>.runSafeOnMain(): Maybe<T> =
+        observeOn(mainThread)
+                .subscribeOn(newThread)
+                .doOnError({ unsubscribeOn(newThread) })
+                .doOnSuccess { unsubscribeOn(newThread) }
+
+fun <T> Maybe<T>.runSafeOnIO(): Maybe<T> =
+        observeOn(ioThread)
+                .subscribeOn(newThread)
+                .doOnError({ unsubscribeOn(newThread) })
+                .doOnSuccess { unsubscribeOn(newThread) }
 

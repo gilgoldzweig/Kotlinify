@@ -41,6 +41,19 @@ fun runAfter(millis: Long,
             RunnableThread.UI -> handler.postDelayed({ runOnUI { func.invoke() } }, millis)
         }
 
+fun run(thread: RunnableThread = RunnableThread.CURRENT,
+        func: () -> Unit) = when (thread) {
+    RunnableThread.CURRENT -> func.invoke()
+    RunnableThread.BACKGROUND -> {
+        runInBackground { func.invoke() }
+
+    }
+    RunnableThread.UI -> {
+        runOnUI { func.invoke() }
+        Unit
+    }
+}
+
 /**
  * run a function on ui thread
  * @param func
@@ -88,6 +101,7 @@ fun runInBackground(func: () -> Unit) {
     BackgroundTask().execute(func)
 }
 
+
 class BackgroundTask : AsyncTask<() -> Unit, Any, Any>() {
     override fun doInBackground(vararg params: (() -> Unit)?): Any {
         params.forEach { it?.invoke() }
@@ -98,3 +112,4 @@ class BackgroundTask : AsyncTask<() -> Unit, Any, Any>() {
 enum class RunnableThread {
      UI, BACKGROUND, CURRENT
 }
+

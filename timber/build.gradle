@@ -1,7 +1,7 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'com.github.dcendents.android-maven'
-
+apply plugin: 'com.novoda.bintray-release'
 group = 'com.github.gilgoldzweig'
 
 
@@ -28,7 +28,14 @@ android {
     }
 
 }
-
+publish {
+    userOrg = 'gilgoldzweig'
+    groupId = 'com.github.gilgoldzweig.kotlinify'
+    artifactId = 'timber'
+    publishVersion = '1.1'
+    desc = 'Custom edition of JakeWharton/timber'
+    website = 'https://github.com/gilgoldzweig/Kotlinify'
+}
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:26.1.0'

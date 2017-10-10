@@ -1,7 +1,7 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'com.github.dcendents.android-maven'
-
+apply plugin: 'com.novoda.bintray-release'
 group = 'com.github.gilgoldzweig'
 
 android {
@@ -32,6 +32,14 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
     implementation 'io.reactivex.rxjava2:rxjava:2.1.0'
+}
+publish {
+    userOrg = 'gilgoldzweig'
+    groupId = 'com.github.gilgoldzweig.kotlinify'
+    artifactId = 'reactive'
+    publishVersion = '1.1'
+    desc = 'The Reactive module provides the following extensions.'
+    website = 'https://github.com/gilgoldzweig/Kotlinify'
 }
 repositories {
     maven {

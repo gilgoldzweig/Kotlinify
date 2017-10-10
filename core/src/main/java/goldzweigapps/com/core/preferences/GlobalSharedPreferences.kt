@@ -1,6 +1,5 @@
 package goldzweigapps.com.core.preferences
 
-import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
@@ -30,8 +29,7 @@ object GlobalSharedPreferences  {
 
 
     //region editor
-    @SuppressLint("CommitPrefEdits")
-    private fun edit() = requiredOrThrow(sharedPreferences.edit())
+    private val edit: SharedPreferences.Editor by lazy { requiredOrThrow(sharedPreferences.edit()) }
     //endregion editor
 
     //region get
@@ -80,17 +78,17 @@ object GlobalSharedPreferences  {
     //endregion contains
 
     //region put
-    fun put(key: String, value: String) = also { edit().putString(key, value) }
+    fun put(key: String, value: String) = also { edit.putString(key, value).commit() }
 
-    fun put(key: String, value: Int) = also { edit().putInt(key, value) }
+    fun put(key: String, value: Int) = also { edit.putInt(key, value).commit() }
 
-    fun put(key: String, value: Long) = also { edit().putLong(key, value) }
+    fun put(key: String, value: Long) = also { edit.putLong(key, value).commit() }
 
-    fun put(key: String, value: Boolean) = also { edit().putBoolean(key, value) }
+    fun put(key: String, value: Boolean) = also { edit.putBoolean(key, value).commit() }
 
-    fun put(key: String, value: Float) = also { edit().putFloat(key, value) }
+    fun put(key: String, value: Float) = also { edit.putFloat(key, value).commit() }
 
-    fun put(key: String, value: Set<String>) = also { edit().putStringSet(key, value) }
+    fun put(key: String, value: Set<String>) = also { edit.putStringSet(key, value).commit() }
 
     infix fun String.put(value: Any) {
         also {
@@ -123,15 +121,15 @@ object GlobalSharedPreferences  {
     //endregion put
 
     //region remove
-    fun remove(key: String) = also { edit().remove(key) }
+    fun remove(key: String) = also { edit.remove(key).commit() }
 
     operator fun minus(key: String) = remove(key)
     //endregion remove
 
     //region commit/apply
-    fun commit() = edit().commit()
+    fun commit() = edit.commit()
 
-    fun apply() = edit().apply()
+    fun apply() = edit.apply()
     //endregion commit/apply
 
     /**
