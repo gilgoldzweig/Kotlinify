@@ -5,6 +5,7 @@ import android.os.Build
 import android.os.Handler
 import android.os.Looper
 
+
 /**
  * Created by gilgoldzweig on 04/09/2017.
  */
@@ -30,29 +31,13 @@ fun isUiThread() =
  * @return true for success and false for failure
  */
 fun runAfter(millis: Long,
-             thread: RunnableThread = RunnableThread.CURRENT,
+             thread: RunnableThread = CURRENT,
              func: () -> Unit): Boolean =
-        when(thread) {
-            RunnableThread.CURRENT -> handler.postDelayed(func, millis)
-            RunnableThread.BACKGROUND -> {
-                handler.postDelayed({ runInBackground { func.invoke() } }, millis)
-                true
-            }
-            RunnableThread.UI -> handler.postDelayed({ runOnUI { func.invoke() } }, millis)
-        }
+        handler.postDelayed({ thread.run(func) }, millis)
 
-fun run(thread: RunnableThread = RunnableThread.CURRENT,
-        func: () -> Unit) = when (thread) {
-    RunnableThread.CURRENT -> func.invoke()
-    RunnableThread.BACKGROUND -> {
-        runInBackground { func.invoke() }
+fun run(thread: RunnableThread = CURRENT, func: () -> Unit) =
+        thread.run(func)
 
-    }
-    RunnableThread.UI -> {
-        runOnUI { func.invoke() }
-        Unit
-    }
-}
 
 /**
  * run a function on ui thread
@@ -62,14 +47,7 @@ fun run(thread: RunnableThread = RunnableThread.CURRENT,
  *   }
  * @return true for success and false for failure
  */
-fun runOnUI(func: () -> Unit): Boolean {
-    return if (!isUiThread()) {
-        handler.post(func::invoke)
-    } else {
-        func.invoke()
-        true
-    }
-}
+fun runOnUI(func: () -> Unit) = UI.run(func)
 
 /**
  * run a vararg functions on background thread
@@ -83,9 +61,8 @@ fun runOnUI(func: () -> Unit): Boolean {
  *   })
  * @return Unit
  */
-fun runInBackground(vararg functions: () -> Unit) {
-    BackgroundTask().execute(*functions)
-}
+fun runInBackground(vararg functions: () -> Unit) =
+        BACKGROUND.run(*functions)
 
 /**
  * running a single function in background same as runInBackground(vararg functions: () -> Unit)
@@ -98,7 +75,7 @@ fun runInBackground(vararg functions: () -> Unit) {
  * @return Unit
  */
 fun runInBackground(func: () -> Unit) {
-    BackgroundTask().execute(func)
+   BACKGROUND.run(func)
 }
 
 
@@ -109,7 +86,28 @@ class BackgroundTask : AsyncTask<() -> Unit, Any, Any>() {
     }
 }
 
-enum class RunnableThread {
-     UI, BACKGROUND, CURRENT
+interface RunnableThread {
+    fun run(vararg func: () -> Unit)
 }
+object UI: RunnableThread {
+    override fun run(vararg func: () -> Unit) {
+        for (function in func) {
+            if (!isUiThread()) {
+                handler.post(function::invoke)
+            } else {
+                function.invoke()
+            }
+        }
+    }
 
+}
+object BACKGROUND: RunnableThread {
+    override fun run(vararg func: () -> Unit) {
+        BackgroundTask().execute(*func)
+    }
+}
+object CURRENT: RunnableThread {
+    override fun run(vararg func: () -> Unit) {
+        for (function in func) function.invoke()
+    }
+}

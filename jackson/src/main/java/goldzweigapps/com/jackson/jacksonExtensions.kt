@@ -9,8 +9,8 @@ import com.fasterxml.jackson.module.kotlin.readValue
  */
 val objectMapper = ObjectMapper()
 
-fun Any.toJson() = objectMapper.writeValueAsString(this)
-fun Any.toPrettyJson() = objectMapper.writerWithDefaultPrettyPrinter()
+fun Any.toJson(): String = objectMapper.writeValueAsString(this)
+fun Any.toPrettyJson(): String = objectMapper.writerWithDefaultPrettyPrinter()
         .writeValueAsString(this)
 
 inline fun <reified T : Any> String.fromJson() = objectMapper.readValue<T>(this)

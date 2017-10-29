@@ -2,6 +2,7 @@ package goldzweigapps.com.core.bundles
 
 import android.os.Bundle
 import android.os.Parcelable
+import kotlin.reflect.KClass
 
 /**
  * Created by gilgoldzweig on 12/09/2017.
@@ -33,6 +34,28 @@ class Bundlify {
     fun <T: Parcelable> String.getParcelableArray() = bundle.getParcelableArray(this) as Array<T>
     fun <T: Parcelable> String.getParcelableArrayList(): ArrayList<T> =
             bundle.getParcelableArrayList<T>(this)
+
+    fun <T: Any> get(type: KClass<T>, key: String) =
+            when (type) {
+                String::class ->
+                   key.getString()
+                Int::class ->
+                    key.getInt()
+                Long::class ->
+                    key.getLong()
+                Boolean::class ->
+                   key.getBoolean()
+                Float::class ->
+                    key.getFloat()
+                Parcelable::class ->
+                        key.getParcelable<Parcelable>()
+                Array<Parcelable>::class ->
+                        key.getParcelableArray<Parcelable>()
+                Array<String>::class ->
+                        key.getStringArray()
+                else -> throw ClassCastException("Bundlify only support bundle types")
+            } as T
+
     //endregion get
 
     //region contains
@@ -76,7 +99,6 @@ class Bundlify {
         bundle.putParcelableArrayList(key, value)
         return this
     }
-
 
     infix fun String.put(value: Any) {
         when(value) {

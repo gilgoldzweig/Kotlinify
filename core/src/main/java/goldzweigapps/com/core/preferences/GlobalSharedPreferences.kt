@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import goldzweigapps.com.core.exceptions.InitializeException
+import kotlin.reflect.KClass
 
 /**
  * Created by gilgoldzweig on 04/09/2017.
@@ -70,6 +71,23 @@ object GlobalSharedPreferences  {
 
     infix fun String.forString(defaultValue: String) : String =
             requiredOrThrow(sharedPreferences.getString(this, defaultValue))
+    fun <T: Any> get(classType: KClass<T>, key: String) =
+        when (classType) {
+             String::class ->
+                getString(key, "")
+            Int::class ->
+                getInt(key, Int.MIN_VALUE)
+            Long::class ->
+                getLong(key, Long.MIN_VALUE)
+            Boolean::class ->
+               getBoolean(key, false)
+            Float::class ->
+              getFloat(key, Float.MIN_VALUE)
+            Set::class -> {
+                getStringSet(key, emptySet())
+            }
+            else -> throw ClassCastException("GlobalSharedPreferences Only support SharedPreferences types")
+    } as T
 
     //endregion get
 
@@ -78,7 +96,7 @@ object GlobalSharedPreferences  {
     //endregion contains
 
     //region put
-    fun put(key: String, value: String) = also { edit.putString(key, value).commit() }
+    fun put(key: String, value: String) = { edit.putString(key, value).commit() }
 
     fun put(key: String, value: Int) = also { edit.putInt(key, value).commit() }
 
@@ -90,33 +108,32 @@ object GlobalSharedPreferences  {
 
     fun put(key: String, value: Set<String>) = also { edit.putStringSet(key, value).commit() }
 
-    infix fun String.put(value: Any) {
+    fun put(key: String,  value: Any) {
         also {
             when (value) {
                 is String ->
-                    put(this, value)
+                    put(key, value)
                 is Int ->
-                    put(this, value)
+                    put(key, value)
                 is Long ->
-                    put(this, value)
+                    put(key, value)
                 is Boolean ->
-                    put(this, value)
+                    put(key, value)
                 is Float ->
-                    put(this, value)
-                is Set<*> -> {
-                    put(this, value.map { it.toString() }.toSet())
-                }
+                    put(key, value)
+                is Set<*> ->
+                    put(key, value.map { it.toString() }.toSet())
             }
         }
     }
 
-    operator fun String.plusAssign(value: Any) = this.put(value)
+    operator fun String.plusAssign(value: Any) = put(this, value)
 
     operator fun plusAssign(keyValuePair: Pair<String, Any>) =
-            keyValuePair.first.put(keyValuePair.second)
+           put(keyValuePair.first, keyValuePair.second)
 
     operator fun plus(keyValuePair: Pair<String, Any>) =
-            keyValuePair.first.put(keyValuePair.second)
+            put(keyValuePair.first, keyValuePair.second)
 
     //endregion put
 
@@ -142,8 +159,8 @@ object GlobalSharedPreferences  {
     } else {
         throw InitializeException("GlobalSharedPreferences", "initialize")
     }
-}
 
+}
 
 inline fun pref(sharedPreferences: GlobalSharedPreferences.() -> Unit) = with(GlobalSharedPreferences) {
     also {

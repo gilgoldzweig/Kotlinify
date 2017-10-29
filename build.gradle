@@ -1,17 +1,10 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext.kotlin_version = '1.2-M2'
+    ext.kotlin_version = '1.1.51'
     repositories {
         google()
         jcenter()
-        maven { url 'https://dl.bintray.com/kotlin/kotlin-eap-1.2' }
-        maven {
-            url 'http://dl.bintray.com/kotlin/kotlin-eap-1.2'
-        }
-        maven {
-            url 'http://dl.bintray.com/kotlin/kotlin-eap-1.2'
-        }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.0.0-beta6'
@@ -29,7 +22,8 @@ allprojects {
     repositories {
         google()
         jcenter()
-        maven { url 'https://dl.bintray.com/kotlin/kotlin-eap-1.2' }
+//        maven { url 'https://dl.bintray.com/kotlin/kotlin-eap-1.2' }
+        mavenCentral()
     }
     tasks.withType(Javadoc).all {
         enabled = false
