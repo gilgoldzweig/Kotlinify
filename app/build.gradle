@@ -30,16 +30,16 @@ android {
 //}
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-    implementation 'com.android.support:appcompat-v7:26.1.0'
-    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
-    testImplementation 'junit:junit:4.12'
-    //    implementationProject('timber')
-//    implementation 'com.github.gilgoldzweig.kotlinify:core:1.1'
-//    implementation 'com.github.GilGoldzweig.kotlinify:timber:1.0.1'
-//    implementation 'com.github.GilGoldzweig.kotlinify:reactive:1.0.0'
-//    implementation 'com.github.GilGoldzweig.kotlinify:jackson:1.0.0'
-    implementation project(':timber')
-    implementation project(':core')
-//    implementation project(':core')
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    compile 'com.android.support:appcompat-v7:26.1.0'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    testCompile 'junit:junit:4.12'
+    //    compileProject('timber')
+//    compile 'com.github.gilgoldzweig.kotlinify:core:1.1'
+//    compile 'com.github.GilGoldzweig.kotlinify:timber:1.0.1'
+//    compile 'com.github.GilGoldzweig.kotlinify:reactive:1.0.0'
+//    compile 'com.github.GilGoldzweig.kotlinify:jackson:1.0.0'
+    compile project(':timber')
+    compile project(':core')
+//    compile project(':core')
 }

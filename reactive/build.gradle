@@ -27,22 +27,17 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    testImplementation 'junit:junit:4.12'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-    implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
-    implementation 'io.reactivex.rxjava2:rxjava:2.1.0'
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    testCompile 'junit:junit:4.12'
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    compile 'io.reactivex.rxjava2:rxjava:2.1.0'
 }
 publish {
     userOrg = 'gilgoldzweig'
     groupId = 'com.github.gilgoldzweig.kotlinify'
     artifactId = 'reactive'
-    publishVersion = '1.1'
+    publishVersion = '1.1.1'
     desc = 'The Reactive module provides the following extensions.'
     website = 'https://github.com/gilgoldzweig/Kotlinify'
-}
-repositories {
-    maven {
-        url 'http://dl.bintray.com/kotlin/kotlin-eap-1.2'
-    }
 }
