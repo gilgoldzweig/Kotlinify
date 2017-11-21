@@ -21,10 +21,10 @@ import kotlin.reflect.KProperty
 fun Context.startActivity(f: Intent.() -> Unit): Unit =
         Intent().apply(f).run(this::startActivity)
 
-inline fun <reified T : Activity> Context.start(noinline f: Intent.() -> Unit = {}) =
+inline fun <reified T : Activity> Context.start(noinline intent: Intent.() -> Unit = {}) =
         startActivity {
             component = componentFor(T::class.java)
-            f(this)
+            intent(this)
         }
 
 fun Context.start(action: String, func: Intent.() -> Unit = {}) =
@@ -63,8 +63,7 @@ fun Context.send(action: String, permission: String, f: Intent.() -> Unit = {}) 
 fun Context.componentFor(targetType: KClass<*>): ComponentName =
         componentFor(targetType.java)
 
-fun Context.componentFor(targetType: Class<*>): ComponentName =
-        ComponentName(this, targetType)
+fun Context.componentFor(targetType: Class<*>) = ComponentName(this, targetType)
 
 inline var Intent.url: String
     get() = dataString
@@ -97,7 +96,7 @@ sealed class ExtraProperty<T> : ReadWriteProperty<Intent, T> {
     }
 
     class IntProperty internal constructor(private val name: String) : ExtraProperty<Int>() {
-        override fun getValue(thisRef: Intent, property: KProperty<*>): Int =
+        override fun getValue(thisRef: Intent, property: KProperty<*>) =
                 thisRef.getIntExtra(name, -1)
 
         override fun setValue(thisRef: Intent, property: KProperty<*>, value: Int) {

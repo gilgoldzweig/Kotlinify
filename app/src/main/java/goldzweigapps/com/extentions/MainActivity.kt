@@ -2,12 +2,18 @@ package goldzweigapps.com.extentions
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import goldzweigapps.com.core.threads.RunnableThread
+import goldzweigapps.com.timber.Timber
 
 class MainActivity : AppCompatActivity() {
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        Timber.plant(Timber.DebugTree())
+
+
 //        findViewById<>()
 //        Timber.plant(Timber.DebugTree())
 //        runAfter(2000, RunnableThread.BACKGROUND) {
@@ -240,5 +246,12 @@ class MainActivity : AppCompatActivity() {
 //
 
 
+    }
+}
+class NewRunnableThread: RunnableThread {
+    override fun run(vararg functions: () -> Unit) {
+        for (func in functions) {
+            Thread({ func.invoke() }).start()
+        }
     }
 }

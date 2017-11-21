@@ -2,6 +2,7 @@ package goldzweigapps.com.core.bundles
 
 import android.os.Bundle
 import android.os.Parcelable
+import kotlin.reflect.KClass
 
 /**
  * Created by gilgoldzweig on 12/09/2017.
@@ -33,6 +34,28 @@ class Bundlify {
     fun <T: Parcelable> String.getParcelableArray() = bundle.getParcelableArray(this) as Array<T>
     fun <T: Parcelable> String.getParcelableArrayList(): ArrayList<T> =
             bundle.getParcelableArrayList<T>(this)
+
+    fun <T: Any> get(type: KClass<T>, key: String) =
+            when (type) {
+                String::class ->
+                   key.getString()
+                Int::class ->
+                    key.getInt()
+                Long::class ->
+                    key.getLong()
+                Boolean::class ->
+                   key.getBoolean()
+                Float::class ->
+                    key.getFloat()
+                Parcelable::class ->
+                        key.getParcelable<Parcelable>()
+                Array<Parcelable>::class ->
+                        key.getParcelableArray<Parcelable>()
+                Array<String>::class ->
+                        key.getStringArray()
+                else -> throw ClassCastException("Bundlify only support bundle types")
+            } as T
+
     //endregion get
 
     //region contains
@@ -64,49 +87,58 @@ class Bundlify {
         bundle.putFloat(key, value)
         return this
     }
+
     fun put(key: String, value: Parcelable): Bundlify {
         bundle.putParcelable(key, value)
         return this
     }
+
     fun put(key: String, value: Array<Parcelable>): Bundlify {
         bundle.putParcelableArray(key, value)
         return this
     }
+
     fun put(key: String, value: ArrayList<Parcelable>): Bundlify {
         bundle.putParcelableArrayList(key, value)
         return this
     }
 
-
-    infix fun String.put(value: Any) {
-        when(value) {
-            is String ->
-                put(this, value)
-            is Int ->
-                put(this, value)
-            is Long ->
-                put(this, value)
-            is Boolean ->
-                put(this, value)
-            is Float ->
-                put(this, value)
-            is Parcelable ->
-                put(this, value)
-            is Array<*> ->
-                    put(this, value as Array<Parcelable>)
-            is ArrayList<*> ->
-
-                put(this, value as ArrayList<Parcelable>)
-        }
+    fun <E: Any> put(bundlifyType: BundlifyType<E>): Bundlify {
+        put(bundlifyType.key, bundlifyType.value)
+        return this
     }
 
-    operator fun String.plusAssign(value: Any) = this.put(value)
+    fun put(key: String, value: Any) {
+        when (value) {
+            is String ->
+                put(key, value)
+            is Int ->
+                put(key, value)
+            is Long ->
+                put(key, value)
+            is Boolean ->
+                put(key, value)
+            is Float ->
+                put(key, value)
+            is Parcelable ->
+                put(key, value)
+            is Array<*> ->
+                put(key, value as Array<Parcelable>)
+            is ArrayList<*> ->
+                put(key, value as ArrayList<Parcelable>)
+        }
+    }
+    private fun putUnit(key: String, value: Any) {
+        put(key, value)
+        return Unit
+    }
+
+    operator fun String.plusAssign(value: Any) = putUnit(this, value)
 
     operator fun plusAssign(keyValuePair: Pair<String, Any>) =
-            keyValuePair.first.put(keyValuePair.second)
+            putUnit(keyValuePair.first, keyValuePair.second)
 
-    operator fun plus(keyValuePair: Pair<String, Any>) =
-            keyValuePair.first.put(keyValuePair.second)
+    operator fun plus(keyValuePair: Pair<String, Any>) = plusAssign(keyValuePair)
 
     //endregion put
 

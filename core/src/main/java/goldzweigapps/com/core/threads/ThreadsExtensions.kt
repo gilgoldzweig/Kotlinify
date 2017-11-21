@@ -5,6 +5,7 @@ import android.os.Build
 import android.os.Handler
 import android.os.Looper
 
+
 /**
  * Created by gilgoldzweig on 04/09/2017.
  */
@@ -30,29 +31,13 @@ fun isUiThread() =
  * @return true for success and false for failure
  */
 fun runAfter(millis: Long,
-             thread: RunnableThread = RunnableThread.CURRENT,
-             func: () -> Unit): Boolean =
-        when(thread) {
-            RunnableThread.CURRENT -> handler.postDelayed(func, millis)
-            RunnableThread.BACKGROUND -> {
-                handler.postDelayed({ runInBackground { func.invoke() } }, millis)
-                true
-            }
-            RunnableThread.UI -> handler.postDelayed({ runOnUI { func.invoke() } }, millis)
-        }
+             thread: RunnableThread = RunnableThreads.CURRENT,
+             func: () -> Unit) =
+        handler.postDelayed({ thread.run(func) }, millis)
 
-fun run(thread: RunnableThread = RunnableThread.CURRENT,
-        func: () -> Unit) = when (thread) {
-    RunnableThread.CURRENT -> func.invoke()
-    RunnableThread.BACKGROUND -> {
-        runInBackground { func.invoke() }
+fun run(thread: RunnableThread = RunnableThreads.CURRENT, func: () -> Unit) =
+        thread.run(func)
 
-    }
-    RunnableThread.UI -> {
-        runOnUI { func.invoke() }
-        Unit
-    }
-}
 
 /**
  * run a function on ui thread
@@ -62,14 +47,7 @@ fun run(thread: RunnableThread = RunnableThread.CURRENT,
  *   }
  * @return true for success and false for failure
  */
-fun runOnUI(func: () -> Unit): Boolean {
-    return if (!isUiThread()) {
-        handler.post(func::invoke)
-    } else {
-        func.invoke()
-        true
-    }
-}
+fun runOnUI(func: () -> Unit) = RunnableThreads.UI.run(func)
 
 /**
  * run a vararg functions on background thread
@@ -83,9 +61,8 @@ fun runOnUI(func: () -> Unit): Boolean {
  *   })
  * @return Unit
  */
-fun runInBackground(vararg functions: () -> Unit) {
-    BackgroundTask().execute(*functions)
-}
+fun runInBackground(vararg functions: () -> Unit) =
+        RunnableThreads.BACKGROUND.run(*functions)
 
 /**
  * running a single function in background same as runInBackground(vararg functions: () -> Unit)
@@ -97,19 +74,50 @@ fun runInBackground(vararg functions: () -> Unit) {
  *   }
  * @return Unit
  */
-fun runInBackground(func: () -> Unit) {
-    BackgroundTask().execute(func)
-}
+fun runInBackground(func: () -> Unit) = RunnableThreads.BACKGROUND.run(func)
 
+class BackgroundReturnTask<R>(val returnValue: (R) -> Unit) : AsyncTask<() -> R, Any, Any>() {
+    var values: List<R> = ArrayList()
+            override fun doInBackground(vararg params: (() -> R)): Any {
+                params.forEach { values += it.invoke() }
+                return false
+            }
 
-class BackgroundTask : AsyncTask<() -> Unit, Any, Any>() {
-    override fun doInBackground(vararg params: (() -> Unit)?): Any {
-        params.forEach { it?.invoke() }
-        return false
+    override fun onPostExecute(result: Any?) {
+        super.onPostExecute(result)
+        values.forEach(returnValue::invoke)
     }
 }
 
-enum class RunnableThread {
-     UI, BACKGROUND, CURRENT
+fun <R: Any?> runInBackground(func: () -> R, returnValue: (R) -> Unit) {
+    BackgroundReturnTask(returnValue).execute(func)
+}
+
+interface RunnableThread {
+    fun run(vararg functions: () -> Unit)
+}
+
+sealed class RunnableThreads: RunnableThread {
+    object UI : RunnableThreads() {
+        override fun run(vararg functions: () -> Unit) {
+            for (function in functions) {
+                if (!isUiThread()) {
+                    handler.post(function::invoke)
+                } else {
+                    function.invoke()
+                }
+            }
+        }
+    }
+    object BACKGROUND : RunnableThreads() {
+        override fun run(vararg functions: () -> Unit) {
+            functions.forEach { Thread(it::invoke).start() }
+        }
+    }
+    object CURRENT : RunnableThreads() {
+        override fun run(vararg functions: () -> Unit) {
+            for (function in functions) function.invoke()
+        }
+    }
 }
 

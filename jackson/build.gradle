@@ -25,16 +25,21 @@ android {
     }
 }
 publish {
-    userOrg = 'gilgoldzweig'
-    groupId = 'com.github.gilgoldzweig.kotlinify'
+    userOrg = "$rootProject.userOrg"
+    groupId =  "$rootProject.groupId"
+    publishVersion =  "$rootProject.publishVersion"
+    website = "$rootProject.website"
     artifactId = 'jackson'
-    publishVersion = '1.1.1'
     desc = 'The jackson module provides the following classes and extensions.'
-    website = 'https://github.com/gilgoldzweig/Kotlinify'
 }
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    testCompile 'junit:junit:4.12'
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-    compile "com.fasterxml.jackson.module:jackson-module-kotlin:2.9.0"
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    testImplementation 'junit:junit:4.12'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    implementation "com.fasterxml.jackson.module:jackson-module-kotlin:2.9.0"
+}
+repositories {
+    maven {
+        url 'http://dl.bintray.com/kotlin/kotlin-eap-1.2'
+    }
 }

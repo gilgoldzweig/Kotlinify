@@ -48,7 +48,7 @@ operator fun <E>List<E>.div(amount: Int): Map<Int, List<E>> {
     return map
 }
 
-operator fun <E>List<E>.get(e: E) = this[indexOf(e)]
+operator fun <E>List<E>.get(e: E) = indexOf(e)
 //endregion lists
 
 //region array lists
@@ -100,4 +100,10 @@ fun <T, E> E.asIterableIndexed(hasNext: Boolean,
                                next: E.(index: Int) -> T,
                                changeOnNext: (index: Int) -> Int) =
         asIterableIndexed({ hasNext }, next, changeOnNext)
+
+operator fun <E> Iterable<E>.get(e: E) = firstOrNull { it == e }
+
+operator fun <E> Iterable<E>.get(position: Int) =
+        filterIndexed { index, _ -> index  == position}.firstOrNull()
+
 //endregion Iterable
