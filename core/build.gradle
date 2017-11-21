@@ -26,22 +26,24 @@ android {
     }
 }
 publish {
-    userOrg = 'gilgoldzweig'
-    groupId = 'com.github.gilgoldzweig.kotlinify'
+    userOrg = "$rootProject.userOrg"
+    groupId =  "$rootProject.groupId"
+    publishVersion =  "$rootProject.publishVersion"
+    website = "$rootProject.website"
     artifactId = 'core'
-    publishVersion = '1.1'
     desc = 'The core module provides the following classes and extensions.'
-    website = 'https://github.com/gilgoldzweig/Kotlinify'
 }
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     implementation "com.android.support:appcompat-v7:$rootProject.versions.support"
+    implementation "com.android.support:design:$rootProject.versions.support"
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
     implementation "com.android.support:recyclerview-v7:$rootProject.versions.support"
+    compile "org.jetbrains.kotlin:kotlin-reflect:1.1.51"
 }
 repositories {
     maven {

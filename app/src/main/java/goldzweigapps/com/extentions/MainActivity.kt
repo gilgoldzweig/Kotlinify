@@ -2,20 +2,18 @@ package goldzweigapps.com.extentions
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import goldzweigapps.com.core.preferences.preferences
-import goldzweigapps.com.core.threads.BACKGROUND
-import goldzweigapps.com.core.threads.runInBackground
+import goldzweigapps.com.core.threads.RunnableThread
+import goldzweigapps.com.timber.Timber
 
 class MainActivity : AppCompatActivity() {
-    var name by preferences<String>(BACKGROUND)
-    var age: Int by preferences()
-    var latitude: Float by preferences()
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        runInBackground {
+        Timber.plant(Timber.DebugTree())
 
-        }
+
 //        findViewById<>()
 //        Timber.plant(Timber.DebugTree())
 //        runAfter(2000, RunnableThread.BACKGROUND) {
@@ -248,5 +246,12 @@ class MainActivity : AppCompatActivity() {
 //
 
 
+    }
+}
+class NewRunnableThread: RunnableThread {
+    override fun run(vararg functions: () -> Unit) {
+        for (func in functions) {
+            Thread({ func.invoke() }).start()
+        }
     }
 }

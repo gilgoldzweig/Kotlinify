@@ -11,9 +11,6 @@ class BundlifyDelegate<T: Any>(val bundlify: Bundlify): ReadWriteProperty<Any, T
     override fun getValue(thisRef: Any, property: KProperty<*>) =
             bundlify.get(thisRef::class, property.name) as T
 
-    override fun setValue(thisRef: Any, property: KProperty<*>, value: T) {
-        with(bundlify) {
-            property.name.put(value)
-        }
-    }
+    override fun setValue(thisRef: Any, property: KProperty<*>, value: T) =
+            bundlify.put(property.name, value)
 }

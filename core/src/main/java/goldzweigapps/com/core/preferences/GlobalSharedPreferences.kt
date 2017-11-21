@@ -3,15 +3,15 @@ package goldzweigapps.com.core.preferences
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
+import android.preference.PreferenceManager
 import goldzweigapps.com.core.exceptions.InitializeException
-import kotlin.reflect.KClass
 
 /**
  * Created by gilgoldzweig on 04/09/2017.
  *
  */
 @Suppress("unused")
-object GlobalSharedPreferences  {
+object GlobalSharedPreferences {
     private lateinit var sharedPreferences: SharedPreferences
     private var initialized = false
 
@@ -21,73 +21,77 @@ object GlobalSharedPreferences  {
      * @param sharedPreferencesName custom name for SharedPreferences
      * @return instance of the GlobalSharedPreferences
      */
-    fun initialize(application: Application, sharedPreferencesName: String = "DefaultSharedPreferences"):
+  fun initialize(application: Application, sharedPreferencesName: String = ""):
             GlobalSharedPreferences {
-        sharedPreferences = application.getSharedPreferences(sharedPreferencesName, Context.MODE_PRIVATE)
+        if (!initialized) {
+            sharedPreferences = if (sharedPreferencesName.isEmpty()) {
+                PreferenceManager.getDefaultSharedPreferences(application)
+            } else {
+                application.getSharedPreferences(sharedPreferencesName, Context.MODE_PRIVATE)
+            }
             initialized = true
+        }
         return this
     }
 
 
     //region editor
-    private val edit: SharedPreferences.Editor by lazy { requiredOrThrow(sharedPreferences.edit()) }
+    private val edit: SharedPreferences.Editor by lazy { requiredOrThrow(sharedPreferences::edit) }
     //endregion editor
 
     //region get
     fun getAll(): Map<String, *> = requiredOrThrow(sharedPreferences.all)
 
-    fun getInt(key: String, defaultValue: Int) =
+    fun getInt(key: String, defaultValue: Int = -1) =
             requiredOrThrow(sharedPreferences.getInt(key, defaultValue))
 
-    fun getLong(key: String, defaultValue: Long) =
+    fun getLong(key: String, defaultValue: Long = -1) =
             requiredOrThrow(sharedPreferences.getLong(key, defaultValue))
 
-    fun getFloat(key: String, defaultValue: Float) =
+    fun getFloat(key: String, defaultValue: Float = -1F) =
             requiredOrThrow(sharedPreferences.getFloat(key, defaultValue))
 
-    fun getBoolean(key: String, defaultValue: Boolean) =
+    fun getBoolean(key: String, defaultValue: Boolean = false) =
             requiredOrThrow(sharedPreferences.getBoolean(key, defaultValue))
 
-    fun getString(key: String, defaultValue: String) : String =
+    fun getString(key: String, defaultValue: String = "") : String =
             requiredOrThrow(sharedPreferences.getString(key, defaultValue))
 
-    fun getStringSet(key: String, defaultValue: Set<String>): MutableSet<String>? =
+    fun getStringSet(key: String, defaultValue: Set<String> = emptySet()): MutableSet<String>? =
             requiredOrThrow(sharedPreferences.getStringSet(key, defaultValue))
 
-    infix fun String.forStringSet(defaultValue: Set<String>): MutableSet<String>? =
+    fun String.forStringSet(defaultValue: Set<String> = emptySet()): MutableSet<String>? =
             requiredOrThrow(sharedPreferences.getStringSet(this, defaultValue))
 
-    infix fun String.forInt(defaultValue: Int) =
+    fun String.forInt(defaultValue: Int = -1) =
             requiredOrThrow(sharedPreferences.getInt(this, defaultValue))
 
-    infix fun String.forLong(defaultValue: Long) =
+    fun String.forLong(defaultValue: Long = -1) =
             requiredOrThrow(sharedPreferences.getLong(this, defaultValue))
 
-    infix fun String.forFloat(defaultValue: Float) =
+    fun String.forFloat(defaultValue: Float = -1F) =
             requiredOrThrow(sharedPreferences.getFloat(this, defaultValue))
 
-    infix fun String.forBoolean(defaultValue: Boolean) =
+    fun String.forBoolean(defaultValue: Boolean = false) =
             requiredOrThrow(sharedPreferences.getBoolean(this, defaultValue))
 
-    infix fun String.forString(defaultValue: String) : String =
+    fun String.forString(defaultValue: String = "") : String =
             requiredOrThrow(sharedPreferences.getString(this, defaultValue))
-    fun <T: Any> get(classType: KClass<T>, key: String) =
-        when (classType) {
-             String::class ->
-                getString(key, "")
-            Int::class ->
-                getInt(key, Int.MIN_VALUE)
-            Long::class ->
-                getLong(key, Long.MIN_VALUE)
-            Boolean::class ->
-               getBoolean(key, false)
-            Float::class ->
-              getFloat(key, Float.MIN_VALUE)
-            Set::class -> {
-                getStringSet(key, emptySet())
-            }
-            else -> throw ClassCastException("GlobalSharedPreferences Only support SharedPreferences types")
-    } as T
+
+    fun <T: Any> get(key: String, defaultValue: T) =
+        when (defaultValue) {
+            is String -> getString(key, defaultValue)
+            is Int -> getInt(key, defaultValue)
+            is Long -> getLong(key, defaultValue)
+            is Boolean -> getBoolean(key, defaultValue)
+            is Float -> getFloat(key, defaultValue)
+            is Set<*> -> getStringSet(key, defaultValue as Set<String>)
+            else -> throw ClassCastException("""
+                GlobalSharedPreferences Only support SharedPreferences types.
+                provided type: ${defaultValue::class}
+                value: $defaultValue
+            """.trimIndent())
+        } as T
 
     //endregion get
 
@@ -96,20 +100,19 @@ object GlobalSharedPreferences  {
     //endregion contains
 
     //region put
-    fun put(key: String, value: String) = { edit.putString(key, value).commit() }
+    fun put(key: String, value: String) = also { edit.putString(key, value) }
 
-    fun put(key: String, value: Int) = also { edit.putInt(key, value).commit() }
+    fun put(key: String, value: Int) = also { edit.putInt(key, value) }
 
-    fun put(key: String, value: Long) = also { edit.putLong(key, value).commit() }
+    fun put(key: String, value: Long) = also { edit.putLong(key, value) }
 
-    fun put(key: String, value: Boolean) = also { edit.putBoolean(key, value).commit() }
+    fun put(key: String, value: Boolean) = also { edit.putBoolean(key, value) }
 
-    fun put(key: String, value: Float) = also { edit.putFloat(key, value).commit() }
+    fun put(key: String, value: Float) = also { edit.putFloat(key, value) }
 
-    fun put(key: String, value: Set<String>) = also { edit.putStringSet(key, value).commit() }
+    fun put(key: String, value: Set<String>) = also { edit.putStringSet(key, value) }
 
-    fun put(key: String,  value: Any) {
-        also {
+    fun put(key: String,  value: Any) = also {
             when (value) {
                 is String ->
                     put(key, value)
@@ -125,12 +128,14 @@ object GlobalSharedPreferences  {
                     put(key, value.map { it.toString() }.toSet())
             }
         }
+    internal fun putUnit(key: String,  value: Any) {
+        put(key, value)
     }
 
-    operator fun String.plusAssign(value: Any) = put(this, value)
+    operator fun String.plusAssign(value: Any) = putUnit(this, value)
 
     operator fun plusAssign(keyValuePair: Pair<String, Any>) =
-           put(keyValuePair.first, keyValuePair.second)
+            putUnit(keyValuePair.first, keyValuePair.second)
 
     operator fun plus(keyValuePair: Pair<String, Any>) =
             put(keyValuePair.first, keyValuePair.second)
@@ -138,7 +143,7 @@ object GlobalSharedPreferences  {
     //endregion put
 
     //region remove
-    fun remove(key: String) = also { edit.remove(key).commit() }
+    fun remove(key: String) = also { edit.remove(key) }
 
     operator fun minus(key: String) = remove(key)
     //endregion remove
@@ -154,13 +159,20 @@ object GlobalSharedPreferences  {
      * @throws InitializeException
      */
     @Throws(InitializeException::class)
-    private fun <T> requiredOrThrow(returnIfInitialized: T) = if (initialized) {
-        returnIfInitialized
-    } else {
-        throw InitializeException("GlobalSharedPreferences", "initialize")
+    private fun <T> requiredOrThrow(returnIfInitialized: T): T = synchronized(initialized) {
+        if (initialized)
+             returnIfInitialized
+        else
+            throw InitializeException("GlobalSharedPreferences", "initialize")
     }
-
-}
+        /**
+         * @param returnIfInitialized object to be returned if class is initialized
+         * @throws InitializeException
+         */
+        @Throws(InitializeException::class)
+        private fun <T> requiredOrThrow(returnIfInitialized: () -> T): T =
+                GlobalSharedPreferences.requiredOrThrow { returnIfInitialized.invoke() }
+    }
 
 inline fun pref(sharedPreferences: GlobalSharedPreferences.() -> Unit) = with(GlobalSharedPreferences) {
     also {

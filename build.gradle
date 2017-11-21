@@ -43,4 +43,8 @@ ext {
             kotlin_anko : "0.10.1",
             junit : "4.12"
     ]
+    userOrg = 'gilgoldzweig'
+    publishVersion = '1.2'
+    groupId = 'com.github.gilgoldzweig.kotlinify'
+    website = 'https://github.com/gilgoldzweig/Kotlinify'
 }

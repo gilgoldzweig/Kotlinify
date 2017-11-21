@@ -29,12 +29,12 @@ android {
 
 }
 publish {
-    userOrg = 'gilgoldzweig'
-    groupId = 'com.github.gilgoldzweig.kotlinify'
+    userOrg = "$rootProject.userOrg"
+    groupId =  "$rootProject.groupId"
+    publishVersion =  "$rootProject.publishVersion"
+    website = "$rootProject.website"
     artifactId = 'timber'
-    publishVersion = '1.1'
     desc = 'Custom edition of JakeWharton/timber'
-    website = 'https://github.com/gilgoldzweig/Kotlinify'
 }
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])

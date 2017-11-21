@@ -31,11 +31,11 @@ fun isUiThread() =
  * @return true for success and false for failure
  */
 fun runAfter(millis: Long,
-             thread: RunnableThread = CURRENT,
-             func: () -> Unit): Boolean =
+             thread: RunnableThread = RunnableThreads.CURRENT,
+             func: () -> Unit) =
         handler.postDelayed({ thread.run(func) }, millis)
 
-fun run(thread: RunnableThread = CURRENT, func: () -> Unit) =
+fun run(thread: RunnableThread = RunnableThreads.CURRENT, func: () -> Unit) =
         thread.run(func)
 
 
@@ -47,7 +47,7 @@ fun run(thread: RunnableThread = CURRENT, func: () -> Unit) =
  *   }
  * @return true for success and false for failure
  */
-fun runOnUI(func: () -> Unit) = UI.run(func)
+fun runOnUI(func: () -> Unit) = RunnableThreads.UI.run(func)
 
 /**
  * run a vararg functions on background thread
@@ -62,7 +62,7 @@ fun runOnUI(func: () -> Unit) = UI.run(func)
  * @return Unit
  */
 fun runInBackground(vararg functions: () -> Unit) =
-        BACKGROUND.run(*functions)
+        RunnableThreads.BACKGROUND.run(*functions)
 
 /**
  * running a single function in background same as runInBackground(vararg functions: () -> Unit)
@@ -74,40 +74,50 @@ fun runInBackground(vararg functions: () -> Unit) =
  *   }
  * @return Unit
  */
-fun runInBackground(func: () -> Unit) {
-   BACKGROUND.run(func)
+fun runInBackground(func: () -> Unit) = RunnableThreads.BACKGROUND.run(func)
+
+class BackgroundReturnTask<R>(val returnValue: (R) -> Unit) : AsyncTask<() -> R, Any, Any>() {
+    var values: List<R> = ArrayList()
+            override fun doInBackground(vararg params: (() -> R)): Any {
+                params.forEach { values += it.invoke() }
+                return false
+            }
+
+    override fun onPostExecute(result: Any?) {
+        super.onPostExecute(result)
+        values.forEach(returnValue::invoke)
+    }
 }
 
-
-class BackgroundTask : AsyncTask<() -> Unit, Any, Any>() {
-    override fun doInBackground(vararg params: (() -> Unit)?): Any {
-        params.forEach { it?.invoke() }
-        return false
-    }
+fun <R: Any?> runInBackground(func: () -> R, returnValue: (R) -> Unit) {
+    BackgroundReturnTask(returnValue).execute(func)
 }
 
 interface RunnableThread {
-    fun run(vararg func: () -> Unit)
+    fun run(vararg functions: () -> Unit)
 }
-object UI: RunnableThread {
-    override fun run(vararg func: () -> Unit) {
-        for (function in func) {
-            if (!isUiThread()) {
-                handler.post(function::invoke)
-            } else {
-                function.invoke()
+
+sealed class RunnableThreads: RunnableThread {
+    object UI : RunnableThreads() {
+        override fun run(vararg functions: () -> Unit) {
+            for (function in functions) {
+                if (!isUiThread()) {
+                    handler.post(function::invoke)
+                } else {
+                    function.invoke()
+                }
             }
         }
     }
+    object BACKGROUND : RunnableThreads() {
+        override fun run(vararg functions: () -> Unit) {
+            functions.forEach { Thread(it::invoke).start() }
+        }
+    }
+    object CURRENT : RunnableThreads() {
+        override fun run(vararg functions: () -> Unit) {
+            for (function in functions) function.invoke()
+        }
+    }
+}
 
-}
-object BACKGROUND: RunnableThread {
-    override fun run(vararg func: () -> Unit) {
-        BackgroundTask().execute(*func)
-    }
-}
-object CURRENT: RunnableThread {
-    override fun run(vararg func: () -> Unit) {
-        for (function in func) function.invoke()
-    }
-}

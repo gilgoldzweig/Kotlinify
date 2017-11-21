@@ -27,7 +27,6 @@ class JacksonUnitTest {
     }
 }
 
-@JsonIgnoreUnknown
 data class PersonTestObject(var firstName: String = "",
                             var lastName: String = "",
                             var age: Int = 0)
