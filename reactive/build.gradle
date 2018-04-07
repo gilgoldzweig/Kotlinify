@@ -4,14 +4,22 @@ apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.novoda.bintray-release'
 group = 'com.github.gilgoldzweig'
 
+publish {
+    userOrg = "$rootProject.userOrg"
+    groupId =  "$rootProject.groupId"
+    publishVersion =  "$rootProject.publishVersion"
+    website = "$rootProject.website"
+    artifactId = 'reactive'
+    desc = 'The Reactive module provides the following extensions.'
+}
 android {
-    compileSdkVersion 26
-    buildToolsVersion "26.0.1"
+    compileSdkVersion 27
+    buildToolsVersion '27.0.3'
 
 
     defaultConfig {
-        minSdkVersion 9
-        targetSdkVersion 26
+        minSdkVersion 14
+        targetSdkVersion 27
         versionCode 1
         versionName "1.0"
 
@@ -30,19 +38,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     testImplementation 'junit:junit:4.12'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
     implementation 'io.reactivex.rxjava2:rxjava:2.1.0'
-}
-publish {
-    userOrg = "$rootProject.userOrg"
-    groupId =  "$rootProject.groupId"
-    publishVersion =  "$rootProject.publishVersion"
-    website = "$rootProject.website"
-    artifactId = 'reactive'
-    desc = 'The Reactive module provides the following extensions.'
-}
-repositories {
-    maven {
-        url 'http://dl.bintray.com/kotlin/kotlin-eap-1.2'
-    }
 }

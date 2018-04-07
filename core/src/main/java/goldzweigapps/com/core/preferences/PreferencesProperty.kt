@@ -5,30 +5,33 @@ import goldzweigapps.com.core.threads.RunnableThreads
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-/**
- * Created by gilgoldzweig on 03/10/2017.
- */
 class PreferencesProperty<T : Any> internal constructor(private val defaultValue: T,
-                                                       private val runnableThread: RunnableThread):
+                                                        private val key: String = "",
+                                                        private val runnableThread: RunnableThread):
         ReadWriteProperty<Any, T> {
 
     private val pref = GlobalSharedPreferences
+
     override fun setValue(thisRef: Any, property: KProperty<*>, value: T) {
+        val prefsKey = if (key.isEmpty()) property.name else key
         when (runnableThread) {
+
             RunnableThreads.BACKGROUND ->
-                pref.put(property.name, value).apply()
+                pref.put(prefsKey, value).apply()
 
             RunnableThreads.CURRENT ->
-                pref.put(property.name, value).commit()
+                pref.put(prefsKey, value)
+
             else ->
-                runnableThread.run({ pref.put(property.name, value).commit() })
+                runnableThread.run({ pref.put(prefsKey, value).commit() })
         }
     }
 
     override fun getValue(thisRef: Any, property: KProperty<*>) =
-            pref.get(property.name, defaultValue)
+            pref.get(if (key.isEmpty()) property.name else key, defaultValue)
 
 }
 fun <T : Any> preferences(defaultValue: T,
-                                       thread: RunnableThread = RunnableThreads.CURRENT) =
-        PreferencesProperty(defaultValue, thread)
+                          key: String = "",
+                          thread: RunnableThread = RunnableThreads.CURRENT) =
+        PreferencesProperty(defaultValue, key, thread)
