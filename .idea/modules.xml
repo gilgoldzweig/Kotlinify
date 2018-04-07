@@ -6,6 +6,7 @@
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/core/core.iml" filepath="$PROJECT_DIR$/core/core.iml" />
       <module fileurl="file://$PROJECT_DIR$/jackson/jackson.iml" filepath="$PROJECT_DIR$/jackson/jackson.iml" />
+      <module fileurl="file://$PROJECT_DIR$/kotlinify.iml" filepath="$PROJECT_DIR$/kotlinify.iml" />
       <module fileurl="file://$PROJECT_DIR$/reactive/reactive.iml" filepath="$PROJECT_DIR$/reactive/reactive.iml" />
       <module fileurl="file://$PROJECT_DIR$/timber/timber.iml" filepath="$PROJECT_DIR$/timber/timber.iml" />
     </modules>

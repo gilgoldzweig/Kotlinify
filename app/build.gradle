@@ -5,12 +5,12 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion "26.0.1"
+    compileSdkVersion 27
+    buildToolsVersion '27.0.3'
     defaultConfig {
         applicationId "goldzweigapps.com.extentions"
         minSdkVersion 15
-        targetSdkVersion 26
+        targetSdkVersion 27
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -30,16 +30,16 @@ android {
 //}
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-    compile 'com.android.support:appcompat-v7:26.1.0'
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    testCompile 'junit:junit:4.12'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "com.android.support:appcompat-v7:$rootProject.versions.support"
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    testImplementation 'junit:junit:4.12'
     //    compileProject('timber')
 //    compile 'com.github.gilgoldzweig.kotlinify:core:1.1'
 //    compile 'com.github.GilGoldzweig.kotlinify:timber:1.0.1'
 //    compile 'com.github.GilGoldzweig.kotlinify:reactive:1.0.0'
 //    compile 'com.github.GilGoldzweig.kotlinify:jackson:1.0.0'
-    compile project(':timber')
-    compile project(':core')
+    implementation project(':timber')
+    implementation project(':core')
 //    compile project(':core')
 }

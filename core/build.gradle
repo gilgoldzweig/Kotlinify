@@ -2,19 +2,26 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.novoda.bintray-release'
+
 group = 'com.github.gilgoldzweig'
 
+publish {
+    userOrg = "$rootProject.userOrg"
+    groupId =  "$rootProject.groupId"
+    publishVersion =  "$rootProject.publishVersion"
+    website = "$rootProject.website"
+    artifactId = 'core'
+    desc = 'The core module provides the following classes and extensions.'
+}
+
 android {
-    compileSdkVersion 26
-    buildToolsVersion "26.0.1"
-
-
+    compileSdkVersion 27
+    buildToolsVersion "27.0.3"
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 26
+        targetSdkVersion 27
         versionCode 1
         versionName "1.0"
-
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
     }
@@ -25,32 +32,17 @@ android {
         }
     }
 }
-publish {
-    userOrg = "$rootProject.userOrg"
-    groupId =  "$rootProject.groupId"
-    publishVersion =  "$rootProject.publishVersion"
-    website = "$rootProject.website"
-    artifactId = 'core'
-    desc = 'The core module provides the following classes and extensions.'
-}
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation "com.android.support:appcompat-v7:$rootProject.versions.support"
-    implementation "com.android.support:design:$rootProject.versions.support"
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+
+    implementation "com.android.support:appcompat-v7:$rootProject.versions.support"
+    implementation "com.android.support:design:$rootProject.versions.support"
     implementation "com.android.support:recyclerview-v7:$rootProject.versions.support"
-    compile "org.jetbrains.kotlin:kotlin-reflect:1.1.51"
-}
-repositories {
-    maven {
-        url 'http://dl.bintray.com/kotlin/kotlin-eap-1.2'
-    }
-}
-task javadoc(type: Javadoc) {
-    excludes = ['**/*.kt'] // < ---- Exclude all kotlin files from javadoc file.
-    // ...
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-reflect:1.2.30"
 }
