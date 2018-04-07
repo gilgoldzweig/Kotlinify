@@ -43,7 +43,7 @@ ext {
             junit : "4.12"
     ]
     userOrg = 'gilgoldzweig'
-    publishVersion = '1.3'
+    publishVersion = '1.3.1'
     groupId = 'com.github.gilgoldzweig.kotlinify'
     website = 'https://github.com/gilgoldzweig/Kotlinify'
 }
