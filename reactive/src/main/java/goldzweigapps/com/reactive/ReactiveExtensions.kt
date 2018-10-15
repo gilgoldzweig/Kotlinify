@@ -28,6 +28,7 @@ fun <T> Observable<T>.runSafeOnMain(): Observable<T> =
                 .doOnComplete { unsubscribeOn(newThread) }
 
 
+
 fun <T> Observable<T>.runSafeOnIO(): Observable<T> =
         observeOn(ioThread)
                 .subscribeOn(newThread)

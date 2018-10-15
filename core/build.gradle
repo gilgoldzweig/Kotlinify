@@ -6,20 +6,20 @@ apply plugin: 'com.novoda.bintray-release'
 group = 'com.github.gilgoldzweig'
 
 publish {
-    userOrg = "$rootProject.userOrg"
-    groupId =  "$rootProject.groupId"
-    publishVersion =  "$rootProject.publishVersion"
-    website = "$rootProject.website"
+    userOrg = "$userOrg"
+    groupId =  "$groupId"
+    publishVersion =  "$publishVersion"
+    website = "$website"
     artifactId = 'core'
     desc = 'The core module provides the following classes and extensions.'
 }
 
 android {
-    compileSdkVersion 27
-    buildToolsVersion "27.0.3"
+    compileSdkVersion = 28
+    buildToolsVersion = "$build_tools_version"
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 27
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -36,13 +36,13 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.1'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
-    implementation "com.android.support:appcompat-v7:$rootProject.versions.support"
-    implementation "com.android.support:design:$rootProject.versions.support"
-    implementation "com.android.support:recyclerview-v7:$rootProject.versions.support"
+    implementation "com.android.support:appcompat-v7:$versions.support"
+    implementation "com.android.support:design:$versions.support"
+    implementation "com.android.support:recyclerview-v7:$versions.support"
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-    implementation "org.jetbrains.kotlin:kotlin-reflect:1.2.30"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-reflect:1.2.71"
 }

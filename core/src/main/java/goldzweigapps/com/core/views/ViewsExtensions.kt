@@ -20,10 +20,11 @@ import goldzweigapps.com.core.collections.asIterableIndexed
 
 //region view visibility
 fun View.toggleVisibility() {
-    visibility = if (isVisible()) View.GONE else View.VISIBLE
+    visibility = if (visible) View.GONE else View.VISIBLE
 }
 
-fun View.isVisible() = visibility == View.VISIBLE
+inline val View.visible
+    get() = visibility == View.VISIBLE
 
 fun View.hide() {
     visibility = View.GONE
@@ -40,9 +41,8 @@ fun View.invisible() {
 
 fun View.onClick(onClick: () -> Unit) = setOnClickListener { onClick() }
 
-fun View.onLongClick(onLongClick: () -> Unit) = setOnLongClickListener {
+fun View.onLongClick(onLongClick: () -> Boolean) = setOnLongClickListener {
     onLongClick()
-    false
 }
 
 fun EditText.onTextChange(onTextChange: (text: CharSequence) -> Unit) {
@@ -65,14 +65,9 @@ val Context.linearLayoutManager: LinearLayoutManager
 val Context.horizontalLinearLayoutManager: LinearLayoutManager
     get() = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
 
-fun View.snackBar(message: CharSequence, length: Int = Snackbar.LENGTH_LONG, action: ActionString? = null) {
-    val snackBar = Snackbar.make(this, message, length)
-    action?.let {
-        snackBar.setAction(it.first, it.second)
-    }
-    snackBar.show()
-}
-fun View.snackBar(@StringRes message: Int, length: Int = Snackbar.LENGTH_LONG, action: ActionResId? = null) {
+fun View.snackBar(message: CharSequence,
+                  length: Int = Snackbar.LENGTH_LONG,
+                  action: ActionString? = null) {
     val snackBar = Snackbar.make(this, message, length)
     action?.let {
         snackBar.setAction(it.first, it.second)
@@ -80,19 +75,37 @@ fun View.snackBar(@StringRes message: Int, length: Int = Snackbar.LENGTH_LONG, a
     snackBar.show()
 }
 
-fun View.height(height: Int) {
-    layoutParams.height = height
+fun View.snackBar(@StringRes message: Int,
+                  length: Int = Snackbar.LENGTH_LONG,
+                  action: ActionResId? = null) {
+    val snackBar = Snackbar.make(this, message, length)
+    action?.let {
+        snackBar.setAction(it.first, it.second)
+    }
+    snackBar.show()
 }
-fun View.width(width: Int) {
-    layoutParams.height = height
-}
+
+
+inline var View.layoutHeigth: Int
+    get() = layoutParams.height
+    set(value) {
+        layoutParams.height = value
+    }
+
+inline var View.layoutWidth: Int
+    get() = layoutParams.width
+    set(value) {
+        layoutParams.width = value
+    }
 
 operator fun TextView.plusAssign(valueToAdd: String) {
     text = "$text$valueToAdd"
 }
+
 operator fun TextView.minusAssign(valueToRemove: String) {
     text = text.removePrefix(valueToRemove)
 }
+
 operator fun TextView.contains(value: String) = value in text
 
 @Throws(IndexOutOfBoundsException::class)
@@ -111,14 +124,15 @@ operator fun TextView.get(index: Int): Char {
 operator fun TextView.get(char: Char, ignoreCase: Boolean = false) =
         text.toString().indexOf(char, 0, ignoreCase)
 
-fun ViewGroup.inflate(@LayoutRes layoutRes: Int,
-                      attachToRoot: Boolean = false) =
-        LayoutInflater.from(context).inflate(layoutRes, this, attachToRoot)
-
 fun Context.inflate(@LayoutRes layoutRes: Int,
                     attachToRoot: Boolean = false,
-                    root: ViewGroup? = null) =
+                    root: ViewGroup? = null): View =
         LayoutInflater.from(this).inflate(layoutRes, root, attachToRoot)
+
+fun ViewGroup.inflate(@LayoutRes layoutRes: Int,
+                      attachToRoot: Boolean = false): View =
+        context.inflate(layoutRes, attachToRoot, this)
+
 
 //region ViewGroup operators
 /**
@@ -129,7 +143,7 @@ operator fun ViewGroup.get(position: Int): View? = getChildAt(position)
 /**
  * [view] = indexOfChild(view)
  */
-operator fun ViewGroup.get(view: View) = indexOfChild(view)
+operator fun ViewGroup.get(view: View): Int = indexOfChild(view)
 
 /**
  * -=
@@ -144,17 +158,15 @@ operator fun ViewGroup.plusAssign(child: View) = addView(child)
 /**
  * if (view in views)
  */
-operator fun ViewGroup.contains(child: View) = get(child) != -1
+operator fun ViewGroup.contains(child: View): Boolean = this[child] != -1
 
 /**
  * for (view in views.iterator)
  * @param T Any layout that extends ViewGroup for example LinearLayout
  */
-operator fun <T: ViewGroup> T.iterator(): Iterable<View> {
+operator fun <T : ViewGroup> T.iterator(): Iterable<View> {
     return asIterableIndexed({ it < childCount }, {
         getChildAt(it)
-    }, {
-        it.inc()
     })
 }
 //endregion ViewGroup operators
@@ -164,17 +176,9 @@ fun ViewGroup.first() = this[0]
 
 fun ViewGroup.last() = this[childCount]
 
-inline fun ViewGroup.forEach(action: (View) -> Unit) {
-    for (i in 0 until childCount) {
-        action(getChildAt(i))
-    }
-}
+inline fun ViewGroup.forEach(action: (View) -> Unit) = iterator().forEach(action)
 
-inline fun ViewGroup.forEachIndexed(action: (Int, View) -> Unit) {
-    for (i in 0 until childCount) {
-        action(i, getChildAt(i))
-    }
-}
+inline fun ViewGroup.forEachIndexed(action: (Int, View) -> Unit) = iterator().forEachIndexed(action)
 
 inline fun ViewGroup.forEachRevered(action: (View) -> Unit) {
     for (i in childCount downTo 0) {
