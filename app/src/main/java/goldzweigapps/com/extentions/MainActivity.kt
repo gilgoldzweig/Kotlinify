@@ -8,7 +8,6 @@ import goldzweigapps.com.core.collections.isNullOrEmpty
 import goldzweigapps.com.timber.Timber
 import kotlin.contracts.ExperimentalContracts
 
-
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -248,12 +247,5 @@ class MainActivity : AppCompatActivity() {
 //
 
 
-    }
-}
-class NewRunnableThread: RunnableThread {
-    override fun run(vararg functions: () -> Unit) {
-        for (func in functions) {
-            Thread({ func.invoke() }).start()
-        }
     }
 }
