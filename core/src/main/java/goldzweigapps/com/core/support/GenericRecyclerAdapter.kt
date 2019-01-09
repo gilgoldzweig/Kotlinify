@@ -1,4 +1,4 @@
-package free.vpn.unblock.proxy.supervpn.vpnclient.utils
+package goldzweigapps.com.core.support
 
 import android.content.Context
 import android.support.annotation.LayoutRes
